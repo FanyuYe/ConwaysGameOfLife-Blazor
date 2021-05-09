@@ -17,16 +17,21 @@ namespace ConwaysGameOfLife.Core
             for (int dim = 0; dim < dimension; ++dim)
             {
                 multiplier = (int)Math.Pow(scale, dimension - dim - 1);
-                coordinate[dim] = remainder / multiplier;
+                coordinate[dimension - dim - 1] = remainder / multiplier;
                 remainder %= multiplier;
             }
 
             return coordinate;
         }
 
-        public static IEnumerable<bool> GetNeighboursFromCell(this IWorld world, int targetCell)
+        public static int ConvertCoordinateMultiToSingle(int dimension, int scale, int[] multiDimensionCoordinate)
         {
-            static IEnumerable<int[]> CreateOffsetMatrix(int dimension)
+            throw new NotImplementedException();
+        }
+
+        public static IEnumerable<bool> GetNeighbourStatesFromCell(this IWorld world, int targetCell)
+        {
+            IEnumerable<int[]> CreateOffsetMatrix(int dimension)
             {
                 var permutations = new List<int[]>() { new int[dimension] };
 
@@ -43,6 +48,8 @@ namespace ConwaysGameOfLife.Core
                     }
                 }
 
+                permutations.RemoveAt(0);
+
                 return permutations;
             }
 
@@ -51,7 +58,8 @@ namespace ConwaysGameOfLife.Core
             if (!offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
             {
                 permutations = CreateOffsetMatrix(world.Dimension);
-                offsetMatrixCache.Add(world.Dimension, permutations);
+                // Cause tests failure, need to be fixed
+                //offsetMatrixCache.Add(world.Dimension, permutations);
             }
 
             foreach (int[] p in permutations)

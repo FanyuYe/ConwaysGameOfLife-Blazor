@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ConwaysGameOfLife.Core
+﻿namespace ConwaysGameOfLife.Core
 {
     /// <summary>
     /// Properties describe a conway's game of life world.

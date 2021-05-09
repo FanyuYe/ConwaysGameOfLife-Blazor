@@ -3,21 +3,15 @@
     /// <summary>
     /// Configuration of rules for the conway's game of life.
     /// </summary>
-    public class RuleConfiguration
+    public class RuleConfiguration : IRuleConfigurable
     {
-        /// <summary>
-        /// The minimum number of neighbours for the cell to survive the iteration. 
-        /// </summary>
+        /// <inheritdoc/>
         public int UnderpopulationThreshold { get; set; }
 
-        /// <summary>
-        /// The maximum number of neighbours for the cell to survice the iteration.
-        /// </summary>
+        /// <inheritdoc/>
         public int OverpopulationThreshold { get; set; }
 
-        /// <summary>
-        /// The exact number of neighbours for the empty cell to spwan the life.
-        /// </summary>
+        /// <inheritdoc/>
         public int ReproductionNeighbourCount { get; set; }
 
         /// <summary>
