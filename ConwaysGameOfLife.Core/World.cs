@@ -5,7 +5,7 @@ namespace ConwaysGameOfLife.Core
     /// <summary>
     /// World represents and describes a conways's game of life.
     /// </summary>
-    public abstract class World : IWorld
+    public class World : IWorld
     {
         /// <inheritdoc/>
         public int Dimension { get; set; }
@@ -22,7 +22,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="dimension">Dimension of the world.</param>
         /// <param name="scale">Length of a single dimension of the world.</param>
         /// <param name="seed">Seed used as initial state of the world.</param>
-        protected World(int dimension, int scale, bool[] seed = null)
+        public World(int dimension, int scale, bool[] seed = null)
         {
             (Dimension, Scale) = (dimension, scale);
 
