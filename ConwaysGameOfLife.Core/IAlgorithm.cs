@@ -2,6 +2,6 @@
 {
     public interface IAlgorithm
     {
-        public void ComputeNextIteration(bool[] currentState, out bool[] nextState);
+        public void ComputeNextIteration(int dimension, int scale, bool[] currentState, out bool[] nextState);
     }
 }
