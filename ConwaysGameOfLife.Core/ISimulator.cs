@@ -6,9 +6,9 @@
     public interface ISimulator
     {
         /// <summary>
-        /// Envolve the world into next iteration.
+        /// Envolve the game into next iteration.
         /// </summary>
-        /// <param name="world">The world being evaluated on.</param>
-        public void GoToNextIteration(IWorld world);
+        /// <param name="world">The world being simulated.</param>
+        public void Tick(IWorld world);
     }
 }
