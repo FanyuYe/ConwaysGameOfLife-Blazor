@@ -11,6 +11,6 @@
         /// <param name="world">The world of the target cell. <seealso cref="IWorld"/></param>
         /// <param name="cellCoordinate">Coordinate of target cell being evaluated on.</param>
         /// <returns>State of the target cell for the next iteration.</returns>
-        public bool ComputeNextIterationOfCell(IWorld world, int cellCoordinate);
+        public bool ApplyRuleToCell(IWorld world, int cellCoordinate);
     }
 }

@@ -23,7 +23,7 @@ namespace ConwaysGameOfLife.Core
         }
 
         /// <inheritdoc/>
-        public bool ComputeNextIterationOfCell(IWorld world, int cellCoordinate)
+        public bool ApplyRuleToCell(IWorld world, int cellCoordinate)
         {
             throw new NotImplementedException();
         }
