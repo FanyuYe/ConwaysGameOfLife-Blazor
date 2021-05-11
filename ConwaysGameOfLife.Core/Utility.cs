@@ -100,7 +100,7 @@ namespace ConwaysGameOfLife.Core
             if (!offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
             {
                 permutations = CreateOffsetMatrix(world.Dimension);
-                offsetMatrixCache.Add(world.Dimension, permutations);
+                offsetMatrixCache.TryAdd(world.Dimension, permutations);
             }
 
             foreach (int[] p in permutations)

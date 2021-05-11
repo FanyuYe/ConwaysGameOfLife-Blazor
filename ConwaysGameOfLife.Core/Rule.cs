@@ -25,7 +25,24 @@ namespace ConwaysGameOfLife.Core
         /// <inheritdoc/>
         public bool ApplyRuleToCell(IWorld world, int cellCoordinate)
         {
-            throw new NotImplementedException();
+            bool currentState = world.State[cellCoordinate];
+            int count = 0;
+
+            foreach(bool b in world.GetNeighbourStatesFromCell(cellCoordinate))
+            {
+                count += b ? 1 : 0;
+
+                if (count > config.OverpopulationThreshold)
+                    return false;
+            }
+
+            if (count < config.UnderpopulationThreshold)
+                return false;
+
+            if (!currentState && count == config.ReproductionNeighbourCount)
+                return true;
+
+            return currentState;
         }
     }
 }
