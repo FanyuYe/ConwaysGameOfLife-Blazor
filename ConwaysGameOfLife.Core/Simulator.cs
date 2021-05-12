@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ConwaysGameOfLife.Core
 {
@@ -16,7 +17,14 @@ namespace ConwaysGameOfLife.Core
 
         public void Tick(IWorld world)
         {
-            throw new NotImplementedException();
+            var nextState = new bool[world.State.Length];
+
+            Parallel.For(0, nextState.Length, i => 
+            {
+                nextState[i] = rule.GetNextIterationOfCell(world, i);
+            });
+
+            Buffer.BlockCopy(nextState, 0, world.State, 0, Buffer.ByteLength(nextState));
         }
     }
 }
