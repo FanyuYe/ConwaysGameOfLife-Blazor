@@ -3,10 +3,17 @@ using System.Threading.Tasks;
 
 namespace ConwaysGameOfLife.Core
 {
+    /// <summary>
+    /// Simulate conways's game of life.
+    /// </summary>
     public class Simulator : ISimulator
     {
         private readonly IRule rule;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="rule">Rule used for simulating.</param>
         public Simulator(IRule rule)
         {
             if (rule == null)
@@ -15,6 +22,7 @@ namespace ConwaysGameOfLife.Core
             this.rule = rule;
         }
 
+        /// <inheritdoc/>
         public void Tick(IWorld world)
         {
             var nextState = new bool[world.State.Length];
