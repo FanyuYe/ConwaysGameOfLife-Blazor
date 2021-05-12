@@ -8,7 +8,7 @@ namespace ConwaysGameOfLife.Core
     /// </summary>
     public class Rule : IRule
     {
-        private IRuleConfigurable config;
+        private readonly IRuleConfigurable config;
 
         /// <summary>
         /// Constructor..

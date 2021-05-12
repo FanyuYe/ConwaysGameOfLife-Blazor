@@ -5,7 +5,7 @@ namespace ConwaysGameOfLife.Core
 {
     public class Simulator : ISimulator
     {
-        private IRule rule;
+        private readonly IRule rule;
 
         public Simulator(IRule rule)
         {
