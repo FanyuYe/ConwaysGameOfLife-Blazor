@@ -31,7 +31,7 @@ namespace ConwaysGameOfLife.Core.Tests
             worldMock.SetupProperty(world => world.State, new bool[size]);
 
             var ruleMock = new Mock<IRule>();
-            ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), It.IsAny<int>())).Returns(true);
+            ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), It.IsAny<int>()));
 
             var world = worldMock.Object;
             var rule = ruleMock.Object;
