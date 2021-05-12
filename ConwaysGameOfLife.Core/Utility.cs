@@ -7,7 +7,7 @@ namespace ConwaysGameOfLife.Core
     /// <summary>
     /// Provide utilities such as coordinate conversion between single array and multi-dimension array as well as querying neighbours.
     /// </summary>
-    public static class Utility
+    internal static class Utility
     {
         private static Dictionary<int, IEnumerable<int[]>> offsetMatrixCache = new Dictionary<int, IEnumerable<int[]>>();
 
@@ -20,7 +20,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="scale">Length of each dimension of the output multi-dimensional array.</param>
         /// <param name="singleDimensionCoordinate">Coordinate of the single dimensional array to convert.</param>
         /// <returns>Multi-dimensionalal array coordinate converted from the single dimensional array coordinate.</returns>
-        public static int[] ConvertCoordinateSingleToMulti(int dimension, int scale, int singleDimensionCoordinate)
+        internal static int[] ConvertCoordinateSingleToMulti(int dimension, int scale, int singleDimensionCoordinate)
         {
             int[] coordinate = new int[dimension];
             int remainder = singleDimensionCoordinate;
@@ -44,7 +44,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="scale">Length of each dimension of the multi-dimensional array.</param>
         /// <param name="multiDimensionCoordinate">Coordinate of the multi-dimensional array to convert.</param>
         /// <returns>Single dimensional array coorindate converted from the multi-dimensional array coordinate.</returns>
-        public static int ConvertCoordinateMultiToSingle(int scale, int[] multiDimensionCoordinate)
+        internal static int ConvertCoordinateMultiToSingle(int scale, int[] multiDimensionCoordinate)
         {
             if (multiDimensionCoordinate == null)
                 throw new ArgumentNullException($"Coordinate is null.");
@@ -71,7 +71,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="world">World that provide information such as dimension and scale. <seealso cref="IWorld"/></param>
         /// <param name="targetCell">Target cell coordinate where neighbours are based on.</param>
         /// <returns></returns>
-        public static IEnumerable<bool> GetNeighbourStatesFromCell(this IWorld world, int targetCell)
+        internal static IEnumerable<bool> GetNeighbourStatesFromCell(this IWorld world, int targetCell)
         {
             IEnumerable<int[]> CreateOffsetMatrix(int dimension)
             {
