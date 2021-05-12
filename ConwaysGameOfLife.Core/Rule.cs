@@ -23,7 +23,7 @@ namespace ConwaysGameOfLife.Core
         }
 
         /// <inheritdoc/>
-        public bool ApplyRuleToCell(IWorld world, int cellCoordinate)
+        public bool GetNextIterationOfCell(IWorld world, int cellCoordinate)
         {
             bool currentState = world.State[cellCoordinate];
             int count = 0;

@@ -16,10 +16,10 @@ namespace ConwaysGameOfLife.Core.Tests
 
         #endregion
 
-        #region ApplyRuleToCell(IWorld, int)
+        #region GetNextIterationOfCell(IWorld, int)
 
         [Fact]
-        public void ApplyRuleToCell_AliveOrEmptyCell_NeighbourLessThanUnderpopulationThreshold_ReturnFalse()
+        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourLessThanUnderpopulationThreshold_ReturnFalse()
         {
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
@@ -52,10 +52,10 @@ namespace ConwaysGameOfLife.Core.Tests
             int emptyZeroNeighbour = 8;
 
             bool expected = false;
-            bool actualAliveOneNeighbour = rule.ApplyRuleToCell(world, aliveOneNeighbour);
-            bool actualAliveZeroNeighbour = rule.ApplyRuleToCell(world, aliveZeroNeighbour);
-            bool actualEmptyOneNeighbour = rule.ApplyRuleToCell(world, emptyOneNeighbour);
-            bool actualEmptyZeroNeighbour = rule.ApplyRuleToCell(world, emptyZeroNeighbour);
+            bool actualAliveOneNeighbour = rule.GetNextIterationOfCell(world, aliveOneNeighbour);
+            bool actualAliveZeroNeighbour = rule.GetNextIterationOfCell(world, aliveZeroNeighbour);
+            bool actualEmptyOneNeighbour = rule.GetNextIterationOfCell(world, emptyOneNeighbour);
+            bool actualEmptyZeroNeighbour = rule.GetNextIterationOfCell(world, emptyZeroNeighbour);
 
             Assert.Equal(expected, actualAliveOneNeighbour);
             Assert.Equal(expected, actualAliveZeroNeighbour);
@@ -64,7 +64,7 @@ namespace ConwaysGameOfLife.Core.Tests
         }
 
         [Fact]
-        public void ApplyRuleToCell_AliveOrEmptyCell_NeighbourGreaterThanOverpopulationThreshold_ReturnFalse()
+        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourGreaterThanOverpopulationThreshold_ReturnFalse()
         {
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
@@ -95,15 +95,15 @@ namespace ConwaysGameOfLife.Core.Tests
             int emptyFiveNeighbour = 7;
 
             bool expected = false;
-            bool actualAliveFourNeighbour = rule.ApplyRuleToCell(world, aliveFourNeighbour);
-            bool actualEmptyFiveNeighbour = rule.ApplyRuleToCell(world, emptyFiveNeighbour);
+            bool actualAliveFourNeighbour = rule.GetNextIterationOfCell(world, aliveFourNeighbour);
+            bool actualEmptyFiveNeighbour = rule.GetNextIterationOfCell(world, emptyFiveNeighbour);
 
             Assert.Equal(expected, actualAliveFourNeighbour);
             Assert.Equal(expected, actualEmptyFiveNeighbour);
         }
 
         [Fact]
-        public void ApplyRuleToCell_AliveCell_NeighbourBetweenUnderpopulationAndOverpopulationThreshold_ReturnTrue()
+        public void GetNextIterationOfCell_AliveCell_NeighbourBetweenUnderpopulationAndOverpopulationThreshold_ReturnTrue()
         {
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
@@ -134,15 +134,15 @@ namespace ConwaysGameOfLife.Core.Tests
             int threeNeighbour = 8;
 
             bool expected = true;
-            bool actualTwoNeighbour = rule.ApplyRuleToCell(world, twoNeighbour);
-            bool actualThreeNeighbour = rule.ApplyRuleToCell(world, threeNeighbour);
+            bool actualTwoNeighbour = rule.GetNextIterationOfCell(world, twoNeighbour);
+            bool actualThreeNeighbour = rule.GetNextIterationOfCell(world, threeNeighbour);
 
             Assert.Equal(expected, actualTwoNeighbour);
             Assert.Equal(expected, actualThreeNeighbour);
         }
 
         [Fact]
-        public void ApplyRuleToCell_EmptyCell_NeighbourEqualToReproductionThreshold_ReturnTrue()
+        public void GetNextIterationOfCell_EmptyCell_NeighbourEqualToReproductionThreshold_ReturnTrue()
         {
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
@@ -172,13 +172,13 @@ namespace ConwaysGameOfLife.Core.Tests
             int threeNeighbour = 0;
 
             bool expected = true;
-            bool actual = rule.ApplyRuleToCell(world, threeNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, threeNeighbour);
 
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void ApplyRuleToCell_EmptyCell_NeighbourNotEqualToReproductionThreshold_ReturnFalse()
+        public void GetNextIterationOfCell_EmptyCell_NeighbourNotEqualToReproductionThreshold_ReturnFalse()
         {
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
@@ -210,9 +210,9 @@ namespace ConwaysGameOfLife.Core.Tests
             int fiveNeighbour = 7;
 
             bool expected = false;
-            bool actualTwoNeighbour = rule.ApplyRuleToCell(world, twoNeighbour);
-            bool actualFourNeighbour = rule.ApplyRuleToCell(world, fourNeighbour);
-            bool actualFiveNeighbour = rule.ApplyRuleToCell(world, fiveNeighbour);
+            bool actualTwoNeighbour = rule.GetNextIterationOfCell(world, twoNeighbour);
+            bool actualFourNeighbour = rule.GetNextIterationOfCell(world, fourNeighbour);
+            bool actualFiveNeighbour = rule.GetNextIterationOfCell(world, fiveNeighbour);
 
             Assert.Equal(expected, actualTwoNeighbour);
             Assert.Equal(expected, actualFourNeighbour);
