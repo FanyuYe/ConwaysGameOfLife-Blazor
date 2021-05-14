@@ -70,8 +70,13 @@ namespace ConwaysGameOfLife.Core.Tests
 
         #region GetNextIterationOfCell(IWorld, int)
 
-        [Fact]
-        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourLessThanUnderpopulationThreshold_ReturnFalse()
+        [Theory]
+        [InlineData(0, 1)] // alive cell, 1 neighbour
+        [InlineData(2, 1)] // empty cell, 1 neighbour
+        [InlineData(6, 0)] // alive cell, 0 neighbour
+        [InlineData(8, 0)] // empty cell, 0 neighbour
+        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourLessThanUnderpopulationThreshold_ReturnFalse(
+            int targetCell, int neighbourCount)
         {
             var world = CreateMockWorld2D_3x3();
             world.State = new bool[9]
@@ -80,29 +85,21 @@ namespace ConwaysGameOfLife.Core.Tests
                     false, false, false,
                     true,  false, false
                 };
-            var oneNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 1);
-            var zeroNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 0);
-            var oneNeighbourRule = new Rule(CreateMockRuleConfiguration(), oneNeighbourWorldInterpreterMock);
-            var zeroNeighbourRule = new Rule(CreateMockRuleConfiguration(), zeroNeighbourWorldInterpreterMock);
+            var rule = new Rule(
+                CreateMockRuleConfiguration(), 
+                CreateWorldInterpreterMock(9, neighbourCount));
 
-            int aliveOneNeighbour = 0;
-            int aliveZeroNeighbour = 6;
-            int emptyOneNeighbour = 2;
-            int emptyZeroNeighbour = 8;
-            bool actualAliveOneNeighbour = oneNeighbourRule.GetNextIterationOfCell(world, aliveOneNeighbour);
-            bool actualAliveZeroNeighbour = zeroNeighbourRule.GetNextIterationOfCell(world, aliveZeroNeighbour);
-            bool actualEmptyOneNeighbour = oneNeighbourRule.GetNextIterationOfCell(world, emptyOneNeighbour);
-            bool actualEmptyZeroNeighbour = zeroNeighbourRule.GetNextIterationOfCell(world, emptyZeroNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, targetCell);
 
             bool expected = false;
-            Assert.Equal(expected, actualAliveOneNeighbour);
-            Assert.Equal(expected, actualAliveZeroNeighbour);
-            Assert.Equal(expected, actualEmptyOneNeighbour);
-            Assert.Equal(expected, actualEmptyZeroNeighbour);
+            Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourGreaterThanOverpopulationThreshold_ReturnFalse()
+        [Theory]
+        [InlineData(1, 4)] // alive cell, 4 neighbour
+        [InlineData(7, 5)] // empty cell, 5 neighbour
+        public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourGreaterThanOverpopulationThreshold_ReturnFalse(
+            int targetCell, int neighbourCount)
         {
             var world = CreateMockWorld2D_3x3();
             world.State = new bool[9]
@@ -111,24 +108,21 @@ namespace ConwaysGameOfLife.Core.Tests
                     true, true,  true,
                     true, false, true
                 };
-            var fourNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 4);
-            var fiveNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 5);
-            var fourNeighbourRule = new Rule(CreateMockRuleConfiguration(), fourNeighbourWorldInterpreterMock);
-            var fiveNeighbourRule = new Rule(CreateMockRuleConfiguration(), fiveNeighbourWorldInterpreterMock);
+            var rule = new Rule(
+                CreateMockRuleConfiguration(),
+                CreateWorldInterpreterMock(9, neighbourCount));
 
-
-            int aliveFourNeighbour = 1;
-            int emptyFiveNeighbour = 7;
-            bool actualAliveFourNeighbour = fourNeighbourRule.GetNextIterationOfCell(world, aliveFourNeighbour);
-            bool actualEmptyFiveNeighbour = fiveNeighbourRule.GetNextIterationOfCell(world, emptyFiveNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, targetCell);
 
             bool expected = false;
-            Assert.Equal(expected, actualAliveFourNeighbour);
-            Assert.Equal(expected, actualEmptyFiveNeighbour);
+            Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void GetNextIterationOfCell_AliveCell_NeighbourBetweenUnderpopulationAndOverpopulationThreshold_ReturnTrue()
+        [Theory]
+        [InlineData(0, 2)] // alive cell, 2 neighbour
+        [InlineData(8, 3)] // alive cell, 3 neighbour
+        public void GetNextIterationOfCell_AliveCell_NeighbourBetweenUnderpopulationAndOverpopulationThreshold_ReturnTrue(
+            int targetCell, int neighbourCount)
         {
             var world = CreateMockWorld2D_3x3();
             world.State = new bool[9]
@@ -137,23 +131,20 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  true,
                     false, true,  true
                 };
-            var twoNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 2);
-            var threeNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 3);
-            var twoNeighbourRule = new Rule(CreateMockRuleConfiguration(), twoNeighbourWorldInterpreterMock);
-            var threeNeighbourRule = new Rule(CreateMockRuleConfiguration(), threeNeighbourWorldInterpreterMock);
+            var rule = new Rule(
+                CreateMockRuleConfiguration(),
+                CreateWorldInterpreterMock(9, neighbourCount));
 
-            int twoNeighbour = 0;
-            int threeNeighbour = 8;
-            bool actualTwoNeighbour = twoNeighbourRule.GetNextIterationOfCell(world, twoNeighbour);
-            bool actualThreeNeighbour = threeNeighbourRule.GetNextIterationOfCell(world, threeNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, targetCell);
 
             bool expected = true;
-            Assert.Equal(expected, actualTwoNeighbour);
-            Assert.Equal(expected, actualThreeNeighbour);
+            Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void GetNextIterationOfCell_EmptyCell_NeighbourEqualToReproductionThreshold_ReturnTrue()
+        [Theory]
+        [InlineData(0, 3)] // empty cell, 3 neighbour
+        public void GetNextIterationOfCell_EmptyCell_NeighbourEqualToReproductionThreshold_ReturnTrue(
+            int targetCell, int neighbourCount)
         {
             var world = CreateMockWorld2D_3x3();
             world.State = new bool[9]
@@ -162,18 +153,22 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  false,
                     false, false, false
                 };
-            var threeNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 3);
-            var threeNeighbourRule = new Rule(CreateMockRuleConfiguration(), threeNeighbourWorldInterpreterMock);
+            var rule = new Rule(
+                CreateMockRuleConfiguration(),
+                CreateWorldInterpreterMock(9, neighbourCount));
 
-            int threeNeighbour = 0;
-            bool actual = threeNeighbourRule.GetNextIterationOfCell(world, threeNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, targetCell);
 
             bool expected = true;
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void GetNextIterationOfCell_EmptyCell_NeighbourNotEqualToReproductionThreshold_ReturnFalse()
+        [Theory]
+        [InlineData(0, 2)] // empty cell, 2 neighbour
+        [InlineData(1, 4)] // empty cell, 4 neighbour
+        [InlineData(7, 5)] // empty cell, 5 neighbour
+        public void GetNextIterationOfCell_EmptyCell_NeighbourNotEqualToReproductionThreshold_ReturnFalse(
+            int targetCell, int neighbourCount)
         {
             var world = CreateMockWorld2D_3x3();
             world.State = new bool[9]
@@ -182,24 +177,14 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  true,
                     true,  false, true
                 };
-            var twoNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 2);
-            var fourNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 4);
-            var fiveNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 5);
-            var twoNeighbourRule = new Rule(CreateMockRuleConfiguration(), twoNeighbourWorldInterpreterMock);
-            var fourNeighbourRule = new Rule(CreateMockRuleConfiguration(), fourNeighbourWorldInterpreterMock);
-            var fiveNeighbourRule = new Rule(CreateMockRuleConfiguration(), fiveNeighbourWorldInterpreterMock);
+            var rule = new Rule(
+                 CreateMockRuleConfiguration(),
+                 CreateWorldInterpreterMock(9, neighbourCount));
 
-            int twoNeighbour = 0;
-            int fourNeighbour = 1;
-            int fiveNeighbour = 7;
-            bool actualTwoNeighbour = twoNeighbourRule.GetNextIterationOfCell(world, twoNeighbour);
-            bool actualFourNeighbour = fourNeighbourRule.GetNextIterationOfCell(world, fourNeighbour);
-            bool actualFiveNeighbour = fiveNeighbourRule.GetNextIterationOfCell(world, fiveNeighbour);
+            bool actual = rule.GetNextIterationOfCell(world, targetCell);
 
             bool expected = false;
-            Assert.Equal(expected, actualTwoNeighbour);
-            Assert.Equal(expected, actualFourNeighbour);
-            Assert.Equal(expected, actualFiveNeighbour);
+            Assert.Equal(expected, actual);
         }
 
         #endregion
