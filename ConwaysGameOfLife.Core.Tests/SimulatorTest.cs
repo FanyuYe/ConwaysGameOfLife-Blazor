@@ -4,6 +4,10 @@ using Xunit;
 
 namespace ConwaysGameOfLife.Core.Tests
 {
+    /// <summary>
+    /// TODO: 
+    /// 1. One Assert per test.
+    /// </summary>
     public class SimulatorTest
     {
         #region Simulator(IRule)

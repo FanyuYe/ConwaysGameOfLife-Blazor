@@ -7,7 +7,8 @@ using Xunit;
 namespace ConwaysGameOfLife.Core.Tests
 {
     /// <summary>
-    /// TODO Refactor the arrangement code after learning more about xUnit and Moq.
+    /// TODO: 
+    /// 1. One Assert per test.
     /// </summary>
     public class UtilityTest
     {
