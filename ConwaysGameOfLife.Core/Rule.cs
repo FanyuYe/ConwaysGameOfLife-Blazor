@@ -9,17 +9,23 @@ namespace ConwaysGameOfLife.Core
     public class Rule : IRule
     {
         private readonly IRuleConfigurable config;
+        private readonly IWorldInterpreter worldInterpreter;
 
         /// <summary>
-        /// Constructor..
+        /// Constructor.
         /// </summary>
         /// <param name="config">Configuration used by the rule. <seealso cref="IRuleConfigurable"/></param>
-        public Rule(IRuleConfigurable config)
+        /// <param name="worldInterpreter">World interpreter used to query the world. <seealso cref="IWorldInterpreter"/></param>
+        public Rule(IRuleConfigurable config, IWorldInterpreter worldInterpreter)
         {
             if (config == null)
                 throw new ArgumentNullException($"Config is null.");
 
+            if (worldInterpreter == null)
+                throw new ArgumentNullException($"WorldInterpreter is null.");
+
             this.config = config;
+            this.worldInterpreter = worldInterpreter;
         }
 
         /// <inheritdoc/>
@@ -28,7 +34,7 @@ namespace ConwaysGameOfLife.Core
             bool currentState = world.State[cellCoordinate];
             int count = 0;
 
-            foreach(bool b in world.GetNeighbourStatesFromCell(cellCoordinate))
+            foreach(bool b in worldInterpreter.GetNeighbourStatesFromCell(world, cellCoordinate))
             {
                 count += b ? 1 : 0;
 

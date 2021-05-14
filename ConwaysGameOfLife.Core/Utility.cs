@@ -5,12 +5,10 @@ using System.Linq;
 namespace ConwaysGameOfLife.Core
 {
     /// <summary>
-    /// Provide utilities such as coordinate conversion between single array and multi-dimension array as well as querying neighbours.
+    /// Provide utilities such as coordinate conversion between single array and multi-dimension array.
     /// </summary>
     internal static class Utility
     {
-        private static Dictionary<int, IEnumerable<int[]>> offsetMatrixCache = new Dictionary<int, IEnumerable<int[]>>();
-
         /// <summary>
         /// Convert a single array coordinate to a multi-dimensional array equivalent.
         /// <para>Note: Least significant dimension is the first, most significant dimension is the last.</para>
@@ -62,73 +60,6 @@ namespace ConwaysGameOfLife.Core
             }
 
             return coo;
-        }
-
-        /// <summary>
-        /// Returns an enumrable that contains states from the target coordinate neighbours.
-        /// <para>Neighbour is defined as offset on each dimension from the target coordinate no greater than 1. Excluding self.</para>
-        /// </summary>
-        /// <param name="world">World that provide information such as dimension and scale. <seealso cref="IWorld"/></param>
-        /// <param name="targetCell">Target cell coordinate where neighbours are based on.</param>
-        /// <returns></returns>
-        internal static IEnumerable<bool> GetNeighbourStatesFromCell(this IWorld world, int targetCell)
-        {
-            IEnumerable<int[]> CreateOffsetMatrix(int dimension)
-            {
-                var permutations = new List<int[]>() { new int[dimension] };
-
-                for (int dim = 0; dim < dimension; ++dim)
-                {
-                    foreach (int[] p in permutations.ToList())
-                    {
-                        var p1 = (int[])p.Clone();
-                        var p2 = (int[])p.Clone();
-                        p1[dim] = -1;
-                        p2[dim] = 1;
-                        permutations.Add(p1);
-                        permutations.Add(p2);
-                    }
-                }
-
-                permutations.RemoveAt(0);
-
-                return permutations;
-            }
-
-            int[] multiCoo = ConvertCoordinateSingleToMulti(world.Dimension, world.Scale, targetCell);
-
-            if (!offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
-            {
-                permutations = CreateOffsetMatrix(world.Dimension);
-                offsetMatrixCache.TryAdd(world.Dimension, permutations);
-            }
-
-            foreach (int[] p in permutations)
-            {
-                bool isOutOfRange = false;
-                int[] neighbourCoo = new int[world.Dimension];
-
-                for (int dim = 0; dim < world.Dimension; ++dim)
-                {
-                    neighbourCoo[dim] = multiCoo[dim] + p[dim];
-
-                    if (neighbourCoo[dim] < 0 || neighbourCoo[dim] > world.Scale - 1)
-                    {
-                        isOutOfRange = true;
-                        break;
-                    }
-                }
-
-                if (isOutOfRange)
-                {
-                    yield return false;
-                }
-                else
-                {
-                    int i = ConvertCoordinateMultiToSingle(world.Scale, neighbourCoo);
-                    yield return world.State[i];
-                }
-            }
         }
     }
 }

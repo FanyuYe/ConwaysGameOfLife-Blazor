@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife.App", "Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife.Core", "ConwaysGameOfLife.Core\ConwaysGameOfLife.Core.csproj", "{23477076-8DF6-49CF-8E95-61862BD0A8E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConwaysGameOfLife.Core.Tests", "ConwaysGameOfLife.Core.Tests\ConwaysGameOfLife.Core.Tests.csproj", "{C823464D-B9C9-43C3-B25F-CE33FDFF4D8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConwaysGameOfLife.Core.Tests", "ConwaysGameOfLife.Core.Tests\ConwaysGameOfLife.Core.Tests.csproj", "{C823464D-B9C9-43C3-B25F-CE33FDFF4D8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

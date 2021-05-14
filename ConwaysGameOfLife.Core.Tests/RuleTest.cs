@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace ConwaysGameOfLife.Core.Tests
@@ -11,13 +12,6 @@ namespace ConwaysGameOfLife.Core.Tests
     public class RuleTest
     {
         #region Init
-
-        private readonly Rule rule;
-
-        public RuleTest()
-        {
-            rule = new Rule(CreateMockRuleConfiguration());
-        }
 
         private IRuleConfigurable CreateMockRuleConfiguration()
         {
@@ -45,6 +39,17 @@ namespace ConwaysGameOfLife.Core.Tests
             return worldMock.Object;
         }
 
+        private IWorldInterpreter CreateWorldInterpreterMock(int length, int trueCount)
+        {
+            var trueNeighbour = Enumerable.Repeat(true, trueCount);
+            var falseNeighbour = Enumerable.Repeat(false, length - trueCount);
+            var worldInterpreterMock = new Mock<IWorldInterpreter>();
+            worldInterpreterMock.Setup(wim => wim.GetNeighbourStatesFromCell(It.IsAny<IWorld>(), It.IsAny<int>()))
+                .Returns(trueNeighbour.Concat(falseNeighbour));
+
+            return worldInterpreterMock.Object;
+        }
+
         #endregion
 
         #region Rule(IRuleConfigurable)
@@ -52,7 +57,13 @@ namespace ConwaysGameOfLife.Core.Tests
         [Fact]
         public void Constructor_ConfigParameterIsNull_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new Rule(null));
+            Assert.Throws<ArgumentNullException>(() => new Rule(null, Mock.Of<IWorldInterpreter>()));
+        }
+
+        [Fact]
+        public void Constructor_WorldInterpreterParameterIsNull_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Rule(Mock.Of<IRuleConfigurable>(), null));
         }
 
         #endregion
@@ -69,18 +80,21 @@ namespace ConwaysGameOfLife.Core.Tests
                     false, false, false,
                     true,  false, false
                 };
+            var oneNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 1);
+            var zeroNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 0);
+            var oneNeighbourRule = new Rule(CreateMockRuleConfiguration(), oneNeighbourWorldInterpreterMock);
+            var zeroNeighbourRule = new Rule(CreateMockRuleConfiguration(), zeroNeighbourWorldInterpreterMock);
 
             int aliveOneNeighbour = 0;
             int aliveZeroNeighbour = 6;
             int emptyOneNeighbour = 2;
             int emptyZeroNeighbour = 8;
+            bool actualAliveOneNeighbour = oneNeighbourRule.GetNextIterationOfCell(world, aliveOneNeighbour);
+            bool actualAliveZeroNeighbour = zeroNeighbourRule.GetNextIterationOfCell(world, aliveZeroNeighbour);
+            bool actualEmptyOneNeighbour = oneNeighbourRule.GetNextIterationOfCell(world, emptyOneNeighbour);
+            bool actualEmptyZeroNeighbour = zeroNeighbourRule.GetNextIterationOfCell(world, emptyZeroNeighbour);
 
             bool expected = false;
-            bool actualAliveOneNeighbour = rule.GetNextIterationOfCell(world, aliveOneNeighbour);
-            bool actualAliveZeroNeighbour = rule.GetNextIterationOfCell(world, aliveZeroNeighbour);
-            bool actualEmptyOneNeighbour = rule.GetNextIterationOfCell(world, emptyOneNeighbour);
-            bool actualEmptyZeroNeighbour = rule.GetNextIterationOfCell(world, emptyZeroNeighbour);
-
             Assert.Equal(expected, actualAliveOneNeighbour);
             Assert.Equal(expected, actualAliveZeroNeighbour);
             Assert.Equal(expected, actualEmptyOneNeighbour);
@@ -97,11 +111,16 @@ namespace ConwaysGameOfLife.Core.Tests
                     true, true,  true,
                     true, false, true
                 };
+            var fourNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 4);
+            var fiveNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 5);
+            var fourNeighbourRule = new Rule(CreateMockRuleConfiguration(), fourNeighbourWorldInterpreterMock);
+            var fiveNeighbourRule = new Rule(CreateMockRuleConfiguration(), fiveNeighbourWorldInterpreterMock);
+
 
             int aliveFourNeighbour = 1;
             int emptyFiveNeighbour = 7;
-            bool actualAliveFourNeighbour = rule.GetNextIterationOfCell(world, aliveFourNeighbour);
-            bool actualEmptyFiveNeighbour = rule.GetNextIterationOfCell(world, emptyFiveNeighbour);
+            bool actualAliveFourNeighbour = fourNeighbourRule.GetNextIterationOfCell(world, aliveFourNeighbour);
+            bool actualEmptyFiveNeighbour = fiveNeighbourRule.GetNextIterationOfCell(world, emptyFiveNeighbour);
 
             bool expected = false;
             Assert.Equal(expected, actualAliveFourNeighbour);
@@ -118,11 +137,15 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  true,
                     false, true,  true
                 };
+            var twoNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 2);
+            var threeNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 3);
+            var twoNeighbourRule = new Rule(CreateMockRuleConfiguration(), twoNeighbourWorldInterpreterMock);
+            var threeNeighbourRule = new Rule(CreateMockRuleConfiguration(), threeNeighbourWorldInterpreterMock);
 
             int twoNeighbour = 0;
             int threeNeighbour = 8;
-            bool actualTwoNeighbour = rule.GetNextIterationOfCell(world, twoNeighbour);
-            bool actualThreeNeighbour = rule.GetNextIterationOfCell(world, threeNeighbour);
+            bool actualTwoNeighbour = twoNeighbourRule.GetNextIterationOfCell(world, twoNeighbour);
+            bool actualThreeNeighbour = threeNeighbourRule.GetNextIterationOfCell(world, threeNeighbour);
 
             bool expected = true;
             Assert.Equal(expected, actualTwoNeighbour);
@@ -139,9 +162,11 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  false,
                     false, false, false
                 };
+            var threeNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 3);
+            var threeNeighbourRule = new Rule(CreateMockRuleConfiguration(), threeNeighbourWorldInterpreterMock);
 
             int threeNeighbour = 0;
-            bool actual = rule.GetNextIterationOfCell(world, threeNeighbour);
+            bool actual = threeNeighbourRule.GetNextIterationOfCell(world, threeNeighbour);
 
             bool expected = true;
             Assert.Equal(expected, actual);
@@ -157,13 +182,19 @@ namespace ConwaysGameOfLife.Core.Tests
                     true,  true,  true,
                     true,  false, true
                 };
+            var twoNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 2);
+            var fourNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 4);
+            var fiveNeighbourWorldInterpreterMock = CreateWorldInterpreterMock(9, 5);
+            var twoNeighbourRule = new Rule(CreateMockRuleConfiguration(), twoNeighbourWorldInterpreterMock);
+            var fourNeighbourRule = new Rule(CreateMockRuleConfiguration(), fourNeighbourWorldInterpreterMock);
+            var fiveNeighbourRule = new Rule(CreateMockRuleConfiguration(), fiveNeighbourWorldInterpreterMock);
 
             int twoNeighbour = 0;
             int fourNeighbour = 1;
             int fiveNeighbour = 7;
-            bool actualTwoNeighbour = rule.GetNextIterationOfCell(world, twoNeighbour);
-            bool actualFourNeighbour = rule.GetNextIterationOfCell(world, fourNeighbour);
-            bool actualFiveNeighbour = rule.GetNextIterationOfCell(world, fiveNeighbour);
+            bool actualTwoNeighbour = twoNeighbourRule.GetNextIterationOfCell(world, twoNeighbour);
+            bool actualFourNeighbour = fourNeighbourRule.GetNextIterationOfCell(world, fourNeighbour);
+            bool actualFiveNeighbour = fiveNeighbourRule.GetNextIterationOfCell(world, fiveNeighbour);
 
             bool expected = false;
             Assert.Equal(expected, actualTwoNeighbour);
