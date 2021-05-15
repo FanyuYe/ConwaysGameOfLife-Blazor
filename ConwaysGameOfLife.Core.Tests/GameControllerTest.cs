@@ -50,32 +50,39 @@ namespace ConwaysGameOfLife.Core.Tests
 
         #region Run(int)
 
-        [Fact]
-        public void Run_InvokeWithTicksParameterBeingZeroAndMinusOne_SimulatorNeverRuns()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(-10)]
+        [InlineData(-100)]
+        [InlineData(-1000)]
+        public void Run_InvokeWithZeroOrNegativeTicksParameter_SimulatorNeverRuns(int ticks)
         {
             var world = Mock.Of<IWorld>();
             var simMock = new Mock<ISimulator>();
             var gameController = new GameController(world, simMock.Object);
             simMock.Setup(sim => sim.Tick(world));
 
-            gameController.Run(0);
-            gameController.Run(-1);
+            gameController.Run(ticks);
 
             simMock.Verify(sim => sim.Tick(world), Times.Never);
         }
 
-        [Fact]
-        public void Run_InvokeWithRandomTicksParameter_SimulatorRunsSameAmountOfTimes()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(10)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        public void Run_InvokeWithPositiveTicksParameter_SimulatorRunsSameAmountOfTimes(int ticks)
         {
             var world = Mock.Of<IWorld>();
             var simMock = new Mock<ISimulator>();
             var gameController = new GameController(world, simMock.Object);
             simMock.Setup(sim => sim.Tick(world));
-            int times = new Random().Next(0, 10);
 
-            gameController.Run(times);
+            gameController.Run(ticks);
 
-            simMock.Verify(sim => sim.Tick(world), Times.Exactly(times));
+            simMock.Verify(sim => sim.Tick(world), Times.Exactly(ticks));
         }
         
         #endregion
