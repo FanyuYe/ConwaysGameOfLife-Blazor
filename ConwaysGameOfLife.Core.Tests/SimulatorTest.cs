@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace ConwaysGameOfLife.Core.Tests
@@ -48,19 +49,16 @@ namespace ConwaysGameOfLife.Core.Tests
             // This set up indicates the cell next state is based on all other cells current value
             // Thus it only yield true if all other cells stay as false, which implies not updated yet
             ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), 0))
-                .Returns(!world.State[1] && !world.State[2]);
+                .Returns(() => !world.State[1] && !world.State[2]);
             ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), 1))
-                .Returns(!world.State[0] && !world.State[2]);
+                .Returns(() => !world.State[0] && !world.State[2]);
             ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), 2))
-                .Returns(!world.State[0] && !world.State[1]);
+                .Returns(() => !world.State[0] && !world.State[1]);
 
             var sim = new Simulator(rule);
             sim.Tick(world);
 
-            for (int i = 0; i < 3; ++i)
-            {
-                Assert.True(world.State[i]);
-            }
+            Assert.Equal(world.State, Enumerable.Repeat(true, 3));
         }
 
         #endregion
