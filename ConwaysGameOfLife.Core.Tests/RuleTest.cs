@@ -14,25 +14,12 @@ namespace ConwaysGameOfLife.Core.Tests
             const int underpopulationThreshold = 2;
             const int overpopulationThreshold = 3;
             const int reproductionNeighbourCount = 3;
-            var ruleConfigMock = new Mock<IRuleConfigurable>();
-            ruleConfigMock.SetupProperty(cfg => cfg.UnderpopulationThreshold, underpopulationThreshold);
-            ruleConfigMock.SetupProperty(cfg => cfg.OverpopulationThreshold, overpopulationThreshold);
-            ruleConfigMock.SetupProperty(cfg => cfg.ReproductionNeighbourCount, reproductionNeighbourCount);
+            var ruleConfigMock = new Mock<IRuleConfigurable>()
+                .SetupProperty(cfg => cfg.UnderpopulationThreshold, underpopulationThreshold)
+                .SetupProperty(cfg => cfg.OverpopulationThreshold, overpopulationThreshold)
+                .SetupProperty(cfg => cfg.ReproductionNeighbourCount, reproductionNeighbourCount);
 
             return ruleConfigMock.Object;
-        }
-
-        private IWorld CreateMockWorld2D_3x3()
-        {
-            const int dimension = 2;
-            const int scale = 3;
-            const int size = scale * scale;
-            var worldMock = new Mock<IWorld>();
-            worldMock.SetupProperty(world => world.Dimension, dimension);
-            worldMock.SetupProperty(world => world.Scale, scale);
-            worldMock.SetupProperty(world => world.State, new bool[size]);
-
-            return worldMock.Object;
         }
 
         private IWorldInterpreter CreateWorldInterpreterMock(int length, int trueCount)
@@ -74,13 +61,12 @@ namespace ConwaysGameOfLife.Core.Tests
         public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourLessThanUnderpopulationThreshold_ReturnFalse(
             int targetCell, int neighbourCount)
         {
-            var world = CreateMockWorld2D_3x3();
-            world.State = new bool[9]
+            var world = TestHelper.CreateMockWorld2D_3x3(new bool[9]
                 {
                     true,  true,  false,
                     false, false, false,
                     true,  false, false
-                };
+                });
             var rule = new Rule(
                 CreateMockRuleConfiguration(), 
                 CreateWorldInterpreterMock(9, neighbourCount));
@@ -97,13 +83,12 @@ namespace ConwaysGameOfLife.Core.Tests
         public void GetNextIterationOfCell_AliveOrEmptyCell_NeighbourGreaterThanOverpopulationThreshold_ReturnFalse(
             int targetCell, int neighbourCount)
         {
-            var world = CreateMockWorld2D_3x3();
-            world.State = new bool[9]
+            var world = TestHelper.CreateMockWorld2D_3x3(new bool[9]
                 {
                     true, true,  false,
                     true, true,  true,
                     true, false, true
-                };
+                });
             var rule = new Rule(
                 CreateMockRuleConfiguration(),
                 CreateWorldInterpreterMock(9, neighbourCount));
@@ -120,13 +105,12 @@ namespace ConwaysGameOfLife.Core.Tests
         public void GetNextIterationOfCell_AliveCell_NeighbourBetweenUnderpopulationAndOverpopulationThreshold_ReturnTrue(
             int targetCell, int neighbourCount)
         {
-            var world = CreateMockWorld2D_3x3();
-            world.State = new bool[9]
+            var world = TestHelper.CreateMockWorld2D_3x3(new bool[9]
                 {
                     true,  false, false,
                     true,  true,  true,
                     false, true,  true
-                };
+                });
             var rule = new Rule(
                 CreateMockRuleConfiguration(),
                 CreateWorldInterpreterMock(9, neighbourCount));
@@ -142,13 +126,12 @@ namespace ConwaysGameOfLife.Core.Tests
         public void GetNextIterationOfCell_EmptyCell_NeighbourEqualToReproductionThreshold_ReturnTrue(
             int targetCell, int neighbourCount)
         {
-            var world = CreateMockWorld2D_3x3();
-            world.State = new bool[9]
+            var world = TestHelper.CreateMockWorld2D_3x3(new bool[9]
                 {
                     false, true,  false,
                     true,  true,  false,
                     false, false, false
-                };
+                });
             var rule = new Rule(
                 CreateMockRuleConfiguration(),
                 CreateWorldInterpreterMock(9, neighbourCount));
@@ -166,13 +149,12 @@ namespace ConwaysGameOfLife.Core.Tests
         public void GetNextIterationOfCell_EmptyCell_NeighbourNotEqualToReproductionThreshold_ReturnFalse(
             int targetCell, int neighbourCount)
         {
-            var world = CreateMockWorld2D_3x3();
-            world.State = new bool[9]
+            var world = TestHelper.CreateMockWorld2D_3x3(new bool[9]
                 {
                     false, false, true,
                     true,  true,  true,
                     true,  false, true
-                };
+                });
             var rule = new Rule(
                  CreateMockRuleConfiguration(),
                  CreateWorldInterpreterMock(9, neighbourCount));

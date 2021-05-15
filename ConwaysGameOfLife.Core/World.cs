@@ -8,13 +8,13 @@ namespace ConwaysGameOfLife.Core
     public class World : IWorld
     {
         /// <inheritdoc/>
-        public int Dimension { get; set; }
+        public int Dimension { get; }
 
         /// <inheritdoc/>
-        public int Scale { get; set; }
+        public int Scale { get; }
 
         /// <inheritdoc/>
-        public bool[] State { get; set; }
+        public bool[] State { get; }
 
         /// <summary>
         /// ctor.

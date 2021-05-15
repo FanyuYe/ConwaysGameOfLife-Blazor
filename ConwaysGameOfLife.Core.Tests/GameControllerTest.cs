@@ -27,15 +27,8 @@ namespace ConwaysGameOfLife.Core.Tests
         [Fact]
         public void Reset_InvokeAfterModifyWorldState_WorldStateEqualToOriginState()
         {
-            const int dimension = 2;
-            const int scale = 3;
-            const int size = scale * scale;
-            var expected = new bool[size];
-            var worldMock = new Mock<IWorld>()
-                .SetupProperty(world => world.Dimension, dimension)
-                .SetupProperty(world => world.Scale, scale)
-                .SetupProperty(world => world.State, (bool[])expected.Clone());
-            var world = worldMock.Object;
+            var expected = new bool[9];
+            var world = TestHelper.CreateMockWorld2D_3x3();
             var sim = Mock.Of<ISimulator>();
             var gameController = new GameController(world, sim);
 

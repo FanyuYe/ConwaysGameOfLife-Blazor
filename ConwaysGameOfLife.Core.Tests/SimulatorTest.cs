@@ -25,24 +25,15 @@ namespace ConwaysGameOfLife.Core.Tests
         [Fact]
         public void Tick_AllCellsBeingCovered_RuleAppliedForEachCellOnce()
         {
-            const int dimension = 2;
-            const int scale = 3;
-            const int size = scale * scale;
-            var worldMock = new Mock<IWorld>();
-            worldMock.SetupProperty(world => world.Dimension, dimension);
-            worldMock.SetupProperty(world => world.Scale, scale);
-            worldMock.SetupProperty(world => world.State, new bool[size]);
-
             var ruleMock = new Mock<IRule>();
             ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), It.IsAny<int>()));
-
-            var world = worldMock.Object;
             var rule = ruleMock.Object;
-
+            var world = TestHelper.CreateMockWorld2D_3x3();
+            
             var sim = new Simulator(rule);
             sim.Tick(world);
 
-            for (int i = 0; i < size; ++i)
+            for (int i = 0; i < 9; ++i)
             {
                 ruleMock.Verify(mock => mock.GetNextIterationOfCell(world, i), Times.Once);
             }
@@ -51,15 +42,7 @@ namespace ConwaysGameOfLife.Core.Tests
         [Fact]
         public void Tick_AllCellsBeingUpdatedSimultenously()
         {
-            const int dimension = 1;
-            const int scale = 3;
-            const int size = scale;
-            var worldMock = new Mock<IWorld>();
-            var world = worldMock.Object;
-            worldMock.SetupProperty(world => world.Dimension, dimension);
-            worldMock.SetupProperty(world => world.Scale, scale);
-            worldMock.SetupProperty(world => world.State, new bool[size]);
-
+            var world = TestHelper.CreateMockWorld1D_3();
             var ruleMock = new Mock<IRule>();
             var rule = ruleMock.Object;
             // This set up indicates the cell next state is based on all other cells current value
@@ -74,7 +57,7 @@ namespace ConwaysGameOfLife.Core.Tests
             var sim = new Simulator(rule);
             sim.Tick(world);
 
-            for (int i = 0; i < size; ++i)
+            for (int i = 0; i < 3; ++i)
             {
                 Assert.True(world.State[i]);
             }
