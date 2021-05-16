@@ -24,7 +24,11 @@ namespace ConwaysGameOfLife.Core
         /// <param name="seed">Seed used as initial state of the world.</param>
         public World(int dimension, int scale, bool[] seed = null)
         {
-            (Dimension, Scale) = (dimension, scale);
+            if (dimension <= 0)
+                throw new ArgumentOutOfRangeException(nameof(dimension), $"Value has to be greater than zero.");
+
+            if (scale <= 0)
+                throw new ArgumentOutOfRangeException(nameof(scale), $"Value has to be greater than zero.");
 
             int size = (int)Math.Pow(scale, dimension);
 
@@ -41,6 +45,8 @@ namespace ConwaysGameOfLife.Core
                 throw new ArgumentOutOfRangeException(
                     $"Seed's length is {seed.Length}, which is incompatible with provided dimension ({dimension}) and scale ({scale}).");
             }
+
+            (Dimension, Scale) = (dimension, scale);
         }
     }
 }
