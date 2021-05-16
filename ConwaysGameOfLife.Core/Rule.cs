@@ -18,14 +18,10 @@ namespace ConwaysGameOfLife.Core
         /// <param name="worldInterpreter">World interpreter used to query the world. <seealso cref="IWorldInterpreter"/></param>
         public Rule(IRuleConfigurable config, IWorldInterpreter worldInterpreter)
         {
-            if (config == null)
-                throw new ArgumentNullException($"Config is null.");
-
-            if (worldInterpreter == null)
-                throw new ArgumentNullException($"WorldInterpreter is null.");
-
-            this.config = config;
-            this.worldInterpreter = worldInterpreter;
+            this.config = config
+                ?? throw new ArgumentNullException($"Config is null.");
+            this.worldInterpreter = worldInterpreter
+                ?? throw new ArgumentNullException($"WorldInterpreter is null.");
         }
 
         /// <inheritdoc/>

@@ -16,10 +16,8 @@ namespace ConwaysGameOfLife.Core
         /// <param name="rule">Rule used for simulating.</param>
         public Simulator(IRule rule)
         {
-            if (rule == null)
-                throw new ArgumentNullException($"Rule is null.");
-
-            this.rule = rule;
+            this.rule = rule
+                ?? throw new ArgumentNullException($"Rule is null.");
         }
 
         /// <inheritdoc/>

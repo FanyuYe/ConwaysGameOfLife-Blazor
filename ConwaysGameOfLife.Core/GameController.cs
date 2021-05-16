@@ -18,14 +18,10 @@ namespace ConwaysGameOfLife.Core
         /// <param name="simulator">Simulator used for game interating.</param>
         public GameController(IWorld world, ISimulator simulator)
         {
-            if (world == null)
-                throw new ArgumentNullException($"World is null.");
-
-            if (simulator == null)
-                throw new ArgumentNullException($"Simulator is null.");
-
-            this.world = world;
-            this.simulator = simulator;
+            this.world = world 
+                ?? throw new ArgumentNullException($"World is null.");
+            this.simulator = simulator 
+                ?? throw new ArgumentNullException($"Simulator is null.");
             seed = (bool[])this.world.State.Clone();
         }
 
