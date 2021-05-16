@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConwaysGameOfLife.Core
@@ -10,6 +11,13 @@ namespace ConwaysGameOfLife.Core
     public class WorldInterpreter : IWorldInterpreter
     {
         private readonly Dictionary<int, IEnumerable<int[]>> offsetMatrixCache = new Dictionary<int, IEnumerable<int[]>>();
+        private readonly ICoordinateConverter coordinateConverter;
+
+        public WorldInterpreter(ICoordinateConverter coordinateConverter)
+        {
+            this.coordinateConverter = coordinateConverter
+                ?? throw new ArgumentNullException(nameof(coordinateConverter));
+        }
 
         /// <inheritdoc/>
         public IEnumerable<bool> GetNeighbourStatesFromCell(IWorld world, int targetCell)
@@ -36,7 +44,7 @@ namespace ConwaysGameOfLife.Core
                 return permutations;
             }
 
-            int[] multiCoo = Utility.ConvertCoordinateSingleToMulti(world.Dimension, world.Scale, targetCell);
+            int[] multiCoo = coordinateConverter.ConvertCoordinateSingleToMulti(world.Dimension, world.Scale, targetCell);
 
             if (!offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
             {
@@ -66,7 +74,7 @@ namespace ConwaysGameOfLife.Core
                 }
                 else
                 {
-                    int i = Utility.ConvertCoordinateMultiToSingle(world.Scale, neighbourCoo);
+                    int i = coordinateConverter.ConvertCoordinateMultiToSingle(world.Scale, neighbourCoo);
                     yield return world.State[i];
                 }
             }

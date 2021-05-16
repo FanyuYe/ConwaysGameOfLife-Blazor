@@ -1,3 +1,5 @@
+using Moq;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -11,7 +13,45 @@ namespace ConwaysGameOfLife.Core.Tests
 
         public WorldInterpreterTest()
         {
-            worldInterpreter = new WorldInterpreter();
+            var converterMock = new Mock<ICoordinateConverter>(MockBehavior.Strict);
+            // 1D 3
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[1] { 0 })).Returns(0);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[1] { 1 })).Returns(1);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[1] { 2 })).Returns(1);
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(1, 3, 0)).Returns(new int[1] { 0 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(1, 3, 1)).Returns(new int[1] { 1 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(1, 3, 2)).Returns(new int[1] { 2 });
+            // 2D 3*3
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 0, 0 })).Returns(0);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 1, 0 })).Returns(1);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 2, 0 })).Returns(2);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 0, 1 })).Returns(3);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 1, 1 })).Returns(4);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 2, 1 })).Returns(5);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 0, 2 })).Returns(6);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 1, 2 })).Returns(7);
+            converterMock.Setup(mock => mock.ConvertCoordinateMultiToSingle(3, new int[2] { 2, 2 })).Returns(8);
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 0)).Returns(new int[2] { 0, 0 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 1)).Returns(new int[2] { 1, 0 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 2)).Returns(new int[2] { 2, 0 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 3)).Returns(new int[2] { 0, 1 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 4)).Returns(new int[2] { 1, 1 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 5)).Returns(new int[2] { 2, 1 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 6)).Returns(new int[2] { 0, 2 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 7)).Returns(new int[2] { 1, 2 });
+            converterMock.Setup(mock => mock.ConvertCoordinateSingleToMulti(2, 3, 8)).Returns(new int[2] { 2, 2 });
+
+            worldInterpreter = new WorldInterpreter(converterMock.Object);
+        }
+
+        #endregion
+
+        #region WorldInterpreter(ICoordinateConverter)
+        
+        [Fact]
+        public void WorldInterpreter_ParameterCoordinateConverterIsNull_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new WorldInterpreter(null));
         }
 
         #endregion

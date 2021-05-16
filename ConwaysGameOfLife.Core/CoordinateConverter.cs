@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ConwaysGameOfLife.Core
 {
     /// <summary>
-    /// Provide utilities such as coordinate conversion between single array and multi-dimension array.
+    /// Base implementation of a coordinate converter between single and multi-dimensional arrays.
     /// </summary>
-    internal static class Utility
+    internal class CoordinateConverter : ICoordinateConverter
     {
         /// <summary>
         /// Convert a single array coordinate to a multi-dimensional array equivalent.
@@ -18,7 +16,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="scale">Length of each dimension of the output multi-dimensional array.</param>
         /// <param name="singleDimensionCoordinate">Coordinate of the single dimensional array to convert.</param>
         /// <returns>Multi-dimensionalal array coordinate converted from the single dimensional array coordinate.</returns>
-        internal static int[] ConvertCoordinateSingleToMulti(int dimension, int scale, int singleDimensionCoordinate)
+        public int[] ConvertCoordinateSingleToMulti(int dimension, int scale, int singleDimensionCoordinate)
         {
             int[] coordinate = new int[dimension];
             int remainder = singleDimensionCoordinate;
@@ -42,7 +40,7 @@ namespace ConwaysGameOfLife.Core
         /// <param name="scale">Length of each dimension of the multi-dimensional array.</param>
         /// <param name="multiDimensionCoordinate">Coordinate of the multi-dimensional array to convert.</param>
         /// <returns>Single dimensional array coorindate converted from the multi-dimensional array coordinate.</returns>
-        internal static int ConvertCoordinateMultiToSingle(int scale, int[] multiDimensionCoordinate)
+        public int ConvertCoordinateMultiToSingle(int scale, int[] multiDimensionCoordinate)
         {
             if (multiDimensionCoordinate == null)
                 throw new ArgumentNullException($"Coordinate is null.");

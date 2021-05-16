@@ -8,16 +8,16 @@
         /// <summary>
         /// Dimension of the world.
         /// </summary>
-        public int Dimension { get; }
+        int Dimension { get; }
 
         /// <summary>
         /// Length of a single dimension for the world.
         /// </summary>
-        public int Scale { get; }
+        int Scale { get; }
 
         /// <summary>
         /// State of the world. True is live and false is dead.
         /// </summary>
-        public bool[] State { get; }
+        bool[] State { get; }
     }
 }

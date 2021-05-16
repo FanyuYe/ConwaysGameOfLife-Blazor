@@ -3,8 +3,14 @@ using Xunit;
 
 namespace ConwaysGameOfLife.Core.Tests
 {
-    public class UtilityTest
+    public class CoordinateConverterTest
     {
+        #region Init
+
+        private readonly CoordinateConverter coordinateConverter = new CoordinateConverter();
+
+        #endregion
+
         #region Utility.ConvertCoordinateSingleToMulti
 
         [Theory]
@@ -24,7 +30,7 @@ namespace ConwaysGameOfLife.Core.Tests
         [InlineData(8, new int[2] { 2, 2 }, 3)]
         public void ConvertCoordinateSingleToMulti_CorrectReturnValue(int originCoordinate, int[] expected, int scale)
         {
-            int[] actual = Utility.ConvertCoordinateSingleToMulti(expected.Length, scale, originCoordinate);
+            int[] actual = coordinateConverter.ConvertCoordinateSingleToMulti(expected.Length, scale, originCoordinate);
 
             Assert.Equal(expected, actual);
         }
@@ -36,13 +42,13 @@ namespace ConwaysGameOfLife.Core.Tests
         [Fact]
         public void ConvertCoordinateMultiToSingle_InvalidScale_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => Utility.ConvertCoordinateMultiToSingle(3, new int[2] { 0, 3 }));
+            Assert.Throws<ArgumentException>(() => coordinateConverter.ConvertCoordinateMultiToSingle(3, new int[2] { 0, 3 }));
         }
 
         [Fact]
         public void ConvertCoordinateMultiToSingle_MultiDimensionCoordinateIsNull_ThrowsNullArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => Utility.ConvertCoordinateMultiToSingle(3, null));
+            Assert.Throws<ArgumentNullException>(() => coordinateConverter.ConvertCoordinateMultiToSingle(3, null));
         }
 
         [Theory]
@@ -62,7 +68,7 @@ namespace ConwaysGameOfLife.Core.Tests
         [InlineData(new int[2] { 2, 2 }, 8, 3)]
         public void ConvertCoordinateMultiToSingle_CorrectReturnValue(int[] originCoordinate, int expected, int scale)
         {
-            int actual = Utility.ConvertCoordinateMultiToSingle(scale, originCoordinate);
+            int actual = coordinateConverter.ConvertCoordinateMultiToSingle(scale, originCoordinate);
 
             Assert.Equal(expected, actual);
         }

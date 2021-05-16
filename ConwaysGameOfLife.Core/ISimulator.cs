@@ -9,6 +9,6 @@
         /// Envolve the game into next iteration.
         /// </summary>
         /// <param name="world">The world being simulated.</param>
-        public void Tick(IWorld world);
+        void Tick(IWorld world);
     }
 }
