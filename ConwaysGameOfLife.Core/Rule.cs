@@ -19,9 +19,9 @@ namespace ConwaysGameOfLife.Core
         public Rule(IRuleConfigurable config, IWorldInterpreter worldInterpreter)
         {
             this.config = config
-                ?? throw new ArgumentNullException($"Config is null.");
+                ?? throw new ArgumentNullException(nameof(config));
             this.worldInterpreter = worldInterpreter
-                ?? throw new ArgumentNullException($"WorldInterpreter is null.");
+                ?? throw new ArgumentNullException(nameof(worldInterpreter));
         }
 
         /// <inheritdoc/>

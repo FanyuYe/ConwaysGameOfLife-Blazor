@@ -19,9 +19,9 @@ namespace ConwaysGameOfLife.Core
         public GameController(IWorld world, ISimulator simulator)
         {
             this.world = world 
-                ?? throw new ArgumentNullException($"World is null.");
+                ?? throw new ArgumentNullException(nameof(world));
             this.simulator = simulator 
-                ?? throw new ArgumentNullException($"Simulator is null.");
+                ?? throw new ArgumentNullException(nameof(simulator));
             seed = (bool[])this.world.State.Clone();
         }
 
