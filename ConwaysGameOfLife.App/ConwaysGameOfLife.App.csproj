@@ -14,4 +14,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConwaysGameOfLife.Core\ConwaysGameOfLife.Core.csproj" />
+  </ItemGroup>
+
 </Project>
