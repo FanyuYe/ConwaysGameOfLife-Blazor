@@ -3,21 +3,21 @@
     /// <summary>
     /// Properties describe a conway's game of life world.
     /// </summary>
-    public interface IWorld
+    internal interface IWorld
     {
         /// <summary>
         /// Dimension of the world.
         /// </summary>
-        int Dimension { get; }
+        int Dimension { get; set; }
 
         /// <summary>
         /// Length of a single dimension for the world.
         /// </summary>
-        int Scale { get; }
+        int Scale { get; set; }
 
         /// <summary>
         /// State of the world. True is live and false is dead.
         /// </summary>
-        bool[] State { get; }
+        bool[] State { get; set; }
     }
 }

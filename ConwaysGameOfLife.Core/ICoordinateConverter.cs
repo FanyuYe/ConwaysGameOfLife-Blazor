@@ -3,7 +3,7 @@
     /// <summary>
     /// Provide utilities such as coordinate conversion between single array and multi-dimension array.
     /// </summary>
-    public interface ICoordinateConverter
+    internal interface ICoordinateConverter
     {
         /// <summary>
         /// Convert a single array coordinate to a multi-dimensional array equivalent.

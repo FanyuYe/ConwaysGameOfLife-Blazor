@@ -3,7 +3,7 @@
     /// <summary>
     /// Configuration of rules for the conway's game of life.
     /// </summary>
-    public class RuleConfiguration : IRuleConfigurable
+    internal class RuleConfiguration : IRuleConfigurable
     {
         /// <inheritdoc/>
         public int UnderpopulationThreshold { get; set; }

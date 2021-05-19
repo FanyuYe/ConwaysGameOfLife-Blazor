@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: InternalsVisibleTo("ConwaysGameOfLife.Core.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM.
 

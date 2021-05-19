@@ -10,9 +10,15 @@ namespace ConwaysGameOfLife.Core.Tests
         #region Simulator(IRule)
 
         [Fact]
+        public void Simulator_ParameterWorldIsNull_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Simulator(null, Mock.Of<IRule>()));
+        }
+
+        [Fact]
         public void Simulator_ParameterRuleIsNull_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new Simulator(null));
+            Assert.Throws<ArgumentNullException>(() => new Simulator(Mock.Of<IWorld>(), null));
         }
 
         #endregion
@@ -27,8 +33,8 @@ namespace ConwaysGameOfLife.Core.Tests
             var rule = ruleMock.Object;
             var world = TestHelper.CreateMockWorld2D_3x3();
             
-            var sim = new Simulator(rule);
-            sim.Tick(world);
+            var sim = new Simulator(world, rule);
+            sim.Tick();
 
             for (int i = 0; i < 9; ++i)
             {
@@ -51,8 +57,8 @@ namespace ConwaysGameOfLife.Core.Tests
             ruleMock.Setup(mock => mock.GetNextIterationOfCell(It.IsAny<IWorld>(), 2))
                 .Returns(() => !world.State[0] && !world.State[1]);
 
-            var sim = new Simulator(rule);
-            sim.Tick(world);
+            var sim = new Simulator(world, rule);
+            sim.Tick();
 
             Assert.Equal(world.State, Enumerable.Repeat(true, 3));
         }

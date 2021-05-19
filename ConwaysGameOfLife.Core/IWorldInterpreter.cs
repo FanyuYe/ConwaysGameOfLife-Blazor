@@ -5,7 +5,7 @@ namespace ConwaysGameOfLife.Core
     /// <summary>
     /// Being able to interpret the world of conway's game of life such as neighbour states of the target cell.
     /// </summary>
-    public interface IWorldInterpreter
+    internal interface IWorldInterpreter
     {
         /// <summary>
         /// Returns neighbour states of target cell.

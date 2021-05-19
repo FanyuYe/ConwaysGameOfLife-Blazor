@@ -6,10 +6,10 @@ namespace ConwaysGameOfLife.Core
     /// Implement rules to run classic conway's game of life.
     /// Threshold of rules are all configurable.
     /// </summary>
-    public class Rule : IRule
+    internal class Rule : IRule
     {
-        private readonly IRuleConfigurable config;
-        private readonly IWorldInterpreter worldInterpreter;
+        private readonly IRuleConfigurable _config;
+        private readonly IWorldInterpreter _worldInterpreter;
 
         /// <summary>
         /// Constructor.
@@ -18,9 +18,9 @@ namespace ConwaysGameOfLife.Core
         /// <param name="worldInterpreter">World interpreter used to query the world. <seealso cref="IWorldInterpreter"/></param>
         public Rule(IRuleConfigurable config, IWorldInterpreter worldInterpreter)
         {
-            this.config = config
+            _config = config
                 ?? throw new ArgumentNullException(nameof(config));
-            this.worldInterpreter = worldInterpreter
+            _worldInterpreter = worldInterpreter
                 ?? throw new ArgumentNullException(nameof(worldInterpreter));
         }
 
@@ -30,18 +30,18 @@ namespace ConwaysGameOfLife.Core
             bool currentState = world.State[cellCoordinate];
             int count = 0;
 
-            foreach(bool b in worldInterpreter.GetNeighbourStatesFromCell(world, cellCoordinate))
+            foreach(bool b in _worldInterpreter.GetNeighbourStatesFromCell(world, cellCoordinate))
             {
                 count += b ? 1 : 0;
 
-                if (count > config.OverpopulationThreshold)
+                if (count > _config.OverpopulationThreshold)
                     return false;
             }
 
-            if (count < config.UnderpopulationThreshold)
+            if (count < _config.UnderpopulationThreshold)
                 return false;
 
-            if (!currentState && count == config.ReproductionNeighbourCount)
+            if (!currentState && count == _config.ReproductionNeighbourCount)
                 return true;
 
             return currentState;

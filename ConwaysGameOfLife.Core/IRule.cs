@@ -3,7 +3,7 @@
     /// <summary>
     /// Apply rules to compute the next iteration of the world state in conway's game of life.
     /// </summary>
-    public interface IRule
+    internal interface IRule
     {
         /// <summary>
         /// Apply rules to get the state for the next iteration of provided cell from world.

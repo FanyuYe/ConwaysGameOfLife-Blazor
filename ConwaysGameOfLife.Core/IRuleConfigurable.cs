@@ -3,7 +3,7 @@
     /// <summary>
     /// Provide a way to make rules being quantitatively configurable.
     /// </summary>
-    public interface IRuleConfigurable
+    internal interface IRuleConfigurable
     {
         /// <summary>
         /// The minimum number of neighbours for the cell to survive the iteration. 

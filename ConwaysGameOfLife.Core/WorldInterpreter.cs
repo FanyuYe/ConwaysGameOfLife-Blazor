@@ -8,14 +8,14 @@ namespace ConwaysGameOfLife.Core
     /// Provide utilities such as coordinate conversion between single array and multi-dimension array as well as querying neighbours.
     /// <para>Neighbour is defined as offset on each dimension from the target coordinate no greater than 1. Excluding self.</para>
     /// </summary>
-    public class WorldInterpreter : IWorldInterpreter
+    internal class WorldInterpreter : IWorldInterpreter
     {
-        private readonly Dictionary<int, IEnumerable<int[]>> offsetMatrixCache = new Dictionary<int, IEnumerable<int[]>>();
-        private readonly ICoordinateConverter coordinateConverter;
+        private readonly Dictionary<int, IEnumerable<int[]>> _offsetMatrixCache = new Dictionary<int, IEnumerable<int[]>>();
+        private readonly ICoordinateConverter _coordinateConverter;
 
         public WorldInterpreter(ICoordinateConverter coordinateConverter)
         {
-            this.coordinateConverter = coordinateConverter
+            _coordinateConverter = coordinateConverter
                 ?? throw new ArgumentNullException(nameof(coordinateConverter));
         }
 
@@ -44,12 +44,12 @@ namespace ConwaysGameOfLife.Core
                 return permutations;
             }
 
-            int[] multiCoo = coordinateConverter.ConvertCoordinateSingleToMulti(world.Dimension, world.Scale, targetCell);
+            int[] multiCoo = _coordinateConverter.ConvertCoordinateSingleToMulti(world.Dimension, world.Scale, targetCell);
 
-            if (!offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
+            if (!_offsetMatrixCache.TryGetValue(world.Dimension, out IEnumerable<int[]> permutations))
             {
                 permutations = CreateOffsetMatrix(world.Dimension);
-                offsetMatrixCache.TryAdd(world.Dimension, permutations);
+                _offsetMatrixCache.TryAdd(world.Dimension, permutations);
             }
 
             foreach (int[] p in permutations)
@@ -74,7 +74,7 @@ namespace ConwaysGameOfLife.Core
                 }
                 else
                 {
-                    int i = coordinateConverter.ConvertCoordinateMultiToSingle(world.Scale, neighbourCoo);
+                    int i = _coordinateConverter.ConvertCoordinateMultiToSingle(world.Scale, neighbourCoo);
                     yield return world.State[i];
                 }
             }

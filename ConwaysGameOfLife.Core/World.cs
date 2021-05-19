@@ -5,16 +5,16 @@ namespace ConwaysGameOfLife.Core
     /// <summary>
     /// World represents and describes a conways's game of life.
     /// </summary>
-    public class World : IWorld
+    internal sealed class World : IWorld
     {
         /// <inheritdoc/>
-        public int Dimension { get; }
+        public int Dimension { get; set; }
 
         /// <inheritdoc/>
-        public int Scale { get; }
+        public int Scale { get; set; }
 
         /// <inheritdoc/>
-        public bool[] State { get; }
+        public bool[] State { get; set; }
 
         /// <summary>
         /// ctor.
