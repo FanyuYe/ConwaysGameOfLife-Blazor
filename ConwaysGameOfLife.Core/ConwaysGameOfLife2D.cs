@@ -2,6 +2,9 @@
 
 namespace ConwaysGameOfLife.Core
 {
+    /// <summary>
+    /// 2D implmentation of conway's game of life.
+    /// </summary>
     public class ConwaysGameOfLife2D
     {
         #region Members
@@ -25,6 +28,15 @@ namespace ConwaysGameOfLife.Core
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
         }
 
+        #endregion
+
+        #region API
+
+        /// <summary>
+        /// Create a classic game with certain scale.
+        /// </summary>
+        /// <param name="scale">Scale for the game.</param>
+        /// <returns>Game object.</returns>
         public static ConwaysGameOfLife2D CreateClassicGame(int scale)
         {
             var converter = new CoordinateConverter();
@@ -43,10 +55,9 @@ namespace ConwaysGameOfLife.Core
             return new ConwaysGameOfLife2D(viewer, editor, simulator, converter);
         }
 
-        #endregion
-
-        #region API
-
+        /// <summary>
+        /// Scale of the game world.
+        /// </summary>
         public int Scale
         {
             get => _viewer.Scale;
@@ -54,6 +65,12 @@ namespace ConwaysGameOfLife.Core
             set => _editor.Resize(_DIMENSION, value);
         }
 
+        /// <summary>
+        /// Get state of a cell by coordinate.
+        /// </summary>
+        /// <param name="x">X axis coordinate.</param>
+        /// <param name="y">Y axis coordinate.</param>
+        /// <returns>State of the cell.</returns>
         public bool GetState(int x, int y)
         {
             return _viewer.GetState(
@@ -61,6 +78,12 @@ namespace ConwaysGameOfLife.Core
                     _viewer.Scale, new int[_DIMENSION] { x, y }));
         }
 
+        /// <summary>
+        /// Set state of a cell by coordinate.
+        /// </summary>
+        /// <param name="x">X axis coordinate.</param>
+        /// <param name="y">Y axis coordinate.</param>
+        /// <param name="newState">New state of the cell set to.</param>
         public void SetState(int x, int y, bool newState)
         {
             _editor.SetState(
@@ -68,12 +91,24 @@ namespace ConwaysGameOfLife.Core
                     _viewer.Scale, new int[_DIMENSION] { x, y }), newState);
         }
 
+        /// <summary>
+        /// Reset game back to previous save.
+        /// </summary>
         public void Reset() => _editor.Reset();
 
+        /// <summary>
+        /// Clear game world. All cell back to empty.
+        /// </summary>
         public void Clear() => _editor.Clear();
 
+        /// <summary>
+        /// Save game.
+        /// </summary>
         public void Save() => _editor.Save();
 
+        /// <summary>
+        /// Run game for a single interation.
+        /// </summary>
         public void Run() => _simulator.Tick();
 
         #endregion
