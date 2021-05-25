@@ -27,11 +27,31 @@ namespace ConwaysGameOfLife.App.Components
 
         public string GameAsASCII { get; private set; }
 
+        private void Draw()
+        {
+            GameAsASCII = PrintGameASCII();
+        }
+
         private void Tick()
         {
             _game.Run();
             Iteration++;
-            GameAsASCII = PrintGameASCII();
+            Draw();
+        }
+
+        private void Reset()
+        {
+            _game.Reset();
+            Iteration = 0;
+            Draw();
+        }
+
+        private void Random()
+        {
+            SetRandomSeed(0.5);
+            _game.Save();
+            Iteration = 0;
+            Draw();
         }
 
         private string PrintGameASCII()
@@ -67,8 +87,9 @@ namespace ConwaysGameOfLife.App.Components
         protected override void OnParametersSet()
         {
             _game = ConwaysGameOfLife2D.CreateClassicGame(Scale);
-            SetRandomSeed(0.5);
-            GameAsASCII = PrintGameASCII();
+            Random();
+            _game.Save();
+            Draw();
 
             base.OnParametersSet();
         }
