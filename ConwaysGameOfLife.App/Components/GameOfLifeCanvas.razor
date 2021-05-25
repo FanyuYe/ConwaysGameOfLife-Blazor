@@ -1,3 +1,9 @@
 ﻿@namespace ConwaysGameOfLife.App.Components
 
-<BECanvas @ref="canvas" Width="@Width" Height="@Height"></BECanvas>
+<button @onclick="Tick">Tick</button>
+<br/>
+<a>Current Iteration: @Iteration</a>
+<br/>
+<textarea readonly="readonly" style="font-family:Consolas" rows="@Scale">@GameAsASCII</textarea>
+<br/>
+<BECanvas @ref="_canvas" Width="@Width" Height="@Height"></BECanvas>
