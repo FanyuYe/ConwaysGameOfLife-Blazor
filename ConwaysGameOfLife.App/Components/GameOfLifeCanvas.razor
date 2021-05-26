@@ -4,6 +4,8 @@
 <button @onclick="Random">Random</button>
 <button @onclick="Reset">Reset</button>
 <br/>
-<a>Current Iteration: @Iteration</a>
+<a style="font-family:Consolas">Current Iteration: @Iteration</a>
 <br/>
+<a style="font-family:Consolas">Current Live Cell: @LiveCellCount</a>
+<br />
 <BECanvas @ref="_canvas" Width="@Width" Height="@Height"></BECanvas>

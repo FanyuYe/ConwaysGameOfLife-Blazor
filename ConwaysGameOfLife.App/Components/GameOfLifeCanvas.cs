@@ -27,10 +27,13 @@ namespace ConwaysGameOfLife.App.Components
 
         public int Iteration { get; private set; }
 
+        public int LiveCellCount { get; private set; }
+
         private void Tick()
         {
             _game.Run();
             Iteration++;
+            UpdateLiveCellCount();
             StateHasChanged();
         }
 
@@ -38,6 +41,7 @@ namespace ConwaysGameOfLife.App.Components
         {
             _game.Reset();
             Iteration = 0;
+            UpdateLiveCellCount();
             StateHasChanged();
         }
 
@@ -46,7 +50,24 @@ namespace ConwaysGameOfLife.App.Components
             SetRandomSeed(0.5);
             _game.Save();
             Iteration = 0;
+            UpdateLiveCellCount();
             StateHasChanged();
+        }
+
+        private void UpdateLiveCellCount()
+        {
+            int i = 0;
+
+            for (int x = 0; x < Scale; ++x)
+            {
+                for (int y = 0; y < Scale; ++y)
+                {
+                    if (_game.GetState(x, y))
+                        i++;
+                }
+            }
+
+            LiveCellCount = i;
         }
 
         private void SetRandomSeed(double percentage)
