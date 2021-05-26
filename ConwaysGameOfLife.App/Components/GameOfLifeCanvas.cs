@@ -1,16 +1,16 @@
 ﻿using Blazor.Extensions;
+using Blazor.Extensions.Canvas.Canvas2D;
 using Blazor.Extensions.Canvas.WebGL;
 using ConwaysGameOfLife.Core;
 using Microsoft.AspNetCore.Components;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ConwaysGameOfLife.App.Components
 {
     public partial class GameOfLifeCanvas
     {
-        private WebGLContext _ctx;
+        private Canvas2DContext _ctx;
         private BECanvasComponent _canvas;
         private ConwaysGameOfLife2D _game;
 
@@ -23,27 +23,22 @@ namespace ConwaysGameOfLife.App.Components
         [Parameter]
         public int Scale { get; set; } = 10;
 
+        public double GridSize { get; private set; }
+
         public int Iteration { get; private set; }
-
-        public string GameAsASCII { get; private set; }
-
-        private void Draw()
-        {
-            GameAsASCII = PrintGameASCII();
-        }
 
         private void Tick()
         {
             _game.Run();
             Iteration++;
-            Draw();
+            StateHasChanged();
         }
 
         private void Reset()
         {
             _game.Reset();
             Iteration = 0;
-            Draw();
+            StateHasChanged();
         }
 
         private void Random()
@@ -51,24 +46,7 @@ namespace ConwaysGameOfLife.App.Components
             SetRandomSeed(0.5);
             _game.Save();
             Iteration = 0;
-            Draw();
-        }
-
-        private string PrintGameASCII()
-        {
-            var sb = new StringBuilder();
-
-            for (int y = 0; y < _game.Scale; ++y)
-            {
-                for (int x = 0; x < _game.Scale; ++x)
-                {
-                    sb.Append(_game.GetState(x, y) ? 'X' : 'O');
-                }
-
-                sb.AppendLine();
-            }
-
-            return sb.ToString().TrimEnd();
+            StateHasChanged();
         }
 
         private void SetRandomSeed(double percentage)
@@ -84,22 +62,49 @@ namespace ConwaysGameOfLife.App.Components
             }
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
+            GridSize = 1.0 * Math.Min(Width, Height) / Scale;
+
             _game = ConwaysGameOfLife2D.CreateClassicGame(Scale);
             Random();
             _game.Save();
-            Draw();
+            StateHasChanged();
 
-            base.OnParametersSet();
+            await base.OnParametersSetAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            _ctx = await _canvas.CreateWebGLAsync();
+            if (firstRender)
+            {
+                _ctx = await _canvas.CreateCanvas2DAsync();
+                await _ctx.SetFillStyleAsync("green");
+                await _ctx.SetLineWidthAsync(1);
+            }
 
-            await _ctx.ClearColorAsync(0, 0, 0, 1);
-            await _ctx.ClearAsync(BufferBits.COLOR_BUFFER_BIT);
+            await _ctx.ClearRectAsync(0, 0, GridSize * Scale, GridSize * Scale);
+            await _ctx.BeginPathAsync();
+            for (int i = 0; i <= Scale; ++i)
+            {
+                await _ctx.MoveToAsync(GridSize * i, 0);
+                await _ctx.LineToAsync(GridSize * i, GridSize * Scale);
+                await _ctx.MoveToAsync(0, GridSize * i);
+                await _ctx.LineToAsync(GridSize * Scale, GridSize * i);
+            }
+            await _ctx.ClosePathAsync();
+            await _ctx.StrokeAsync();
+
+            for (int y = 0; y < Scale; ++y)
+            {
+                for (int x = 0; x < Scale; ++x)
+                {
+                    if (_game.GetState(x, y))
+                    {
+                        await _ctx.FillRectAsync(x * GridSize + 1, y * GridSize + 1, GridSize - 2, GridSize - 2);
+                    }
+                }
+            }
         }
     }
 }
