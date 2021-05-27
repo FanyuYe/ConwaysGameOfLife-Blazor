@@ -101,11 +101,14 @@ namespace ConwaysGameOfLife.App.Components
             {
                 _ctx = await _canvas.CreateCanvas2DAsync();
                 await _ctx.SetFillStyleAsync("green");
+                await _ctx.SetStrokeStyleAsync("#777777");
                 await _ctx.SetLineWidthAsync(1);
             }
 
             await _ctx.ClearRectAsync(0, 0, GridSize * Scale, GridSize * Scale);
+
             await _ctx.BeginPathAsync();
+
             for (int i = 0; i <= Scale; ++i)
             {
                 await _ctx.MoveToAsync(GridSize * i, 0);
@@ -113,8 +116,6 @@ namespace ConwaysGameOfLife.App.Components
                 await _ctx.MoveToAsync(0, GridSize * i);
                 await _ctx.LineToAsync(GridSize * Scale, GridSize * i);
             }
-            await _ctx.ClosePathAsync();
-            await _ctx.StrokeAsync();
 
             for (int y = 0; y < Scale; ++y)
             {
@@ -122,10 +123,13 @@ namespace ConwaysGameOfLife.App.Components
                 {
                     if (_game.GetState(x, y))
                     {
-                        await _ctx.FillRectAsync(x * GridSize + 1, y * GridSize + 1, GridSize - 2, GridSize - 2);
+                        await _ctx.RectAsync(x * GridSize + 1, y * GridSize + 1, GridSize - 2, GridSize - 2);
                     }
                 }
             }
+
+            await _ctx.StrokeAsync();
+            await _ctx.FillAsync();
         }
     }
 }
