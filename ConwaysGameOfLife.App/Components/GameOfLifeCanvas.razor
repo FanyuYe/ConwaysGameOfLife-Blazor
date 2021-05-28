@@ -1,11 +1,17 @@
 ﻿@namespace ConwaysGameOfLife.App.Components
 
 <button @onclick="Tick">Tick</button>
+<button @onclick="Run">Run</button>
+<button @onclick="Pause">Pause</button>
 <button @onclick="Random">Random</button>
 <button @onclick="Reset">Reset</button>
-<br/>
+<br />
 <a style="font-family:Consolas">Current Iteration: @Iteration</a>
-<br/>
+<br />
 <a style="font-family:Consolas">Current Live Cell: @LiveCellCount</a>
 <br />
 <BECanvas @ref="_canvas" Width="@Width" Height="@Height"></BECanvas>
+<br />
+<a style="font-family:Consolas">Last tick took @TickCostInMilliSecond ms.</a>
+<br />
+<a style="font-family:Consolas">Last render took @RenderCostInMilliSecond ms.</a>

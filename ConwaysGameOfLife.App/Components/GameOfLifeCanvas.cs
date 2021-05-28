@@ -4,7 +4,9 @@ using Blazor.Extensions.Canvas.WebGL;
 using ConwaysGameOfLife.Core;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ConwaysGameOfLife.App.Components
 {
@@ -13,6 +15,8 @@ namespace ConwaysGameOfLife.App.Components
         private Canvas2DContext _ctx;
         private BECanvasComponent _canvas;
         private ConwaysGameOfLife2D _game;
+        private Timer _timer;
+        private Stopwatch _stopwatch;
 
         [Parameter]
         public int Width { get; set; } = 400;
@@ -29,9 +33,28 @@ namespace ConwaysGameOfLife.App.Components
 
         public int LiveCellCount { get; private set; }
 
+        public long TickCostInMilliSecond { get; private set; }
+
+        public long RenderCostInMilliSecond { get; private set; }
+
+        private void Run()
+        {
+            _timer.Start();
+        }
+
+        private void Pause()
+        {
+            _timer.Stop();
+        }
+
         private void Tick()
         {
+            _stopwatch.Start();
             _game.Run();
+            _stopwatch.Stop();
+            TickCostInMilliSecond = _stopwatch.ElapsedMilliseconds;
+            _stopwatch.Reset();
+
             Iteration++;
             UpdateLiveCellCount();
             StateHasChanged();
@@ -83,6 +106,16 @@ namespace ConwaysGameOfLife.App.Components
             }
         }
 
+        protected override async Task OnInitializedAsync()
+        {
+            _timer = new Timer(250);
+            _timer.Elapsed += (s, e) => Tick();
+
+            _stopwatch = new Stopwatch();
+
+            await base.OnInitializedAsync();
+        }
+
         protected override async Task OnParametersSetAsync()
         {
             GridSize = 1.0 * Math.Min(Width, Height) / Scale;
@@ -97,6 +130,8 @@ namespace ConwaysGameOfLife.App.Components
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            _stopwatch.Start();
+
             if (firstRender)
             {
                 _ctx = await _canvas.CreateCanvas2DAsync();
@@ -130,6 +165,10 @@ namespace ConwaysGameOfLife.App.Components
 
             await _ctx.StrokeAsync();
             await _ctx.FillAsync();
+
+            _stopwatch.Stop();
+            RenderCostInMilliSecond = _stopwatch.ElapsedMilliseconds;
+            _stopwatch.Reset();
         }
     }
 }
