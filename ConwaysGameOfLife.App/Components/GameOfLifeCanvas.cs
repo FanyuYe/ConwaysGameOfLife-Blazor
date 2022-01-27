@@ -13,6 +13,7 @@ namespace ConwaysGameOfLife.App.Components
     public partial class GameOfLifeCanvas
     {
         private Canvas2DContext _ctx;
+        private WebGLContext _webGLContext;
         private BECanvasComponent _canvas;
         private ConwaysGameOfLife2D _game;
         private Timer _timer;
@@ -26,6 +27,9 @@ namespace ConwaysGameOfLife.App.Components
 
         [Parameter]
         public int Scale { get; set; } = 10;
+
+        [Parameter]
+        public bool IsWebGL { get; set; }
 
         public double GridSize { get; private set; }
 
@@ -132,6 +136,33 @@ namespace ConwaysGameOfLife.App.Components
         {
             _stopwatch.Start();
 
+            if (IsWebGL)
+            {
+                await OnAfterRenderAsyncWebGL(firstRender);
+            }
+            else
+            {
+                await OnAfterRenderAsyncCanvas2D(firstRender);
+            }
+
+            _stopwatch.Stop();
+            RenderCostInMilliSecond = _stopwatch.ElapsedMilliseconds;
+            _stopwatch.Reset();
+        }
+
+        private async Task OnAfterRenderAsyncWebGL(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _webGLContext = await _canvas.CreateWebGLAsync();
+            }
+
+            await this._webGLContext.ClearColorAsync(0, 0, 0, 1);
+            await this._webGLContext.ClearAsync(BufferBits.COLOR_BUFFER_BIT);
+        }
+
+        private async Task OnAfterRenderAsyncCanvas2D(bool firstRender)
+        {
             if (firstRender)
             {
                 _ctx = await _canvas.CreateCanvas2DAsync();
@@ -165,10 +196,6 @@ namespace ConwaysGameOfLife.App.Components
 
             await _ctx.StrokeAsync();
             await _ctx.FillAsync();
-
-            _stopwatch.Stop();
-            RenderCostInMilliSecond = _stopwatch.ElapsedMilliseconds;
-            _stopwatch.Reset();
         }
     }
 }
