@@ -5,6 +5,7 @@ using ConwaysGameOfLife.Core;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -12,8 +13,32 @@ namespace ConwaysGameOfLife.App.Components
 {
     public partial class GameOfLifeCanvas
     {
-        private Canvas2DContext _ctx;
+        private readonly string vsSource = @"
+            attribute vec4 aVertexPosition;
+
+            uniform mat4 uModelViewMatrix;
+            uniform mat4 uProjectionMatrix;
+
+            void main()
+            {
+                gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            }
+        ";
+
+        private readonly string fsSource = @"
+            void main() 
+            {
+                gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            }
+        ";
+
         private WebGLContext _webGLContext;
+        private WebGLShader vtxShader;
+        private WebGLShader frgShader;
+        private WebGLProgram program;
+        private WebGLBuffer buffer;
+
+        private Canvas2DContext _ctx;
         private BECanvasComponent _canvas;
         private ConwaysGameOfLife2D _game;
         private Timer _timer;
@@ -155,10 +180,92 @@ namespace ConwaysGameOfLife.App.Components
             if (firstRender)
             {
                 _webGLContext = await _canvas.CreateWebGLAsync();
+
+                vtxShader = await _webGLContext.CreateShaderAsync(ShaderType.VERTEX_SHADER);
+                frgShader = await _webGLContext.CreateShaderAsync(ShaderType.FRAGMENT_SHADER);
+                await _webGLContext.ShaderSourceAsync(vtxShader, vsSource);
+                await _webGLContext.ShaderSourceAsync(frgShader, fsSource);
+                await _webGLContext.CompileShaderAsync(vtxShader);
+                await _webGLContext.CompileShaderAsync(frgShader);
+
+                if (!await _webGLContext.GetShaderParameterAsync<bool>(vtxShader, ShaderParameter.COMPILE_STATUS))
+                {
+                    await _webGLContext.DeleteShaderAsync(vtxShader);
+                    throw new ApplicationException($"An error occurred compiling the shaders: {await _webGLContext.GetErrorAsync()}");
+                }
+                if (!await _webGLContext.GetShaderParameterAsync<bool>(frgShader, ShaderParameter.COMPILE_STATUS))
+                {
+                    await _webGLContext.DeleteShaderAsync(frgShader);
+                    throw new ApplicationException($"An error occurred compiling the shaders: {await _webGLContext.GetErrorAsync()}");
+                }
+
+                program = await _webGLContext.CreateProgramAsync();
+                await _webGLContext.AttachShaderAsync(program, vtxShader);
+                await _webGLContext.AttachShaderAsync(program, frgShader);
+                await _webGLContext.LinkProgramAsync(program);
+
+                if (!await _webGLContext.GetProgramParameterAsync<bool>(program, ProgramParameter.LINK_STATUS))
+                {
+                    throw new ApplicationException($"Unable to initialize the shader program: {await _webGLContext.GetErrorAsync()}");
+                }
+
+                buffer = await _webGLContext.CreateBufferAsync();
+                await _webGLContext.BindBufferAsync(BufferType.ARRAY_BUFFER, buffer);
+                await _webGLContext.BufferDataAsync<float>(BufferType.ARRAY_BUFFER, 
+                    new float[8] { 
+                        1,1,
+                        -1,1,
+                        1,-1,
+                        -1,-1 
+                    }, BufferUsageHint.STATIC_DRAW);
             }
 
-            await this._webGLContext.ClearColorAsync(0, 0, 0, 1);
-            await this._webGLContext.ClearAsync(BufferBits.COLOR_BUFFER_BIT);
+            await _webGLContext.BeginBatchAsync();
+
+            await _webGLContext.ClearColorAsync(0, 0, 0, 1);
+            await _webGLContext.ClearDepthAsync(1);
+            await _webGLContext.EnableAsync(EnableCap.DEPTH_TEST);
+            await _webGLContext.DepthFuncAsync(CompareFunction.LEQUAL);
+            await _webGLContext.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
+
+            await _webGLContext.BindBufferAsync(BufferType.ARRAY_BUFFER, buffer);
+            await _webGLContext.VertexAttribPointerAsync(
+                (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"),
+                2, DataType.FLOAT, false, 0, 0);
+            await _webGLContext.EnableVertexAttribArrayAsync(
+                (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"));
+            await _webGLContext.UseProgramAsync(program);
+
+            var m1 = Matrix4x4.CreatePerspectiveFieldOfView(
+                45 * (float)Math.PI / 180,
+                1.0f * Width / Height,
+                0.1f,
+                100);
+            var m2 = Matrix4x4.CreateTranslation(new Vector3(-0.0f, 0.0f, -6.0f));
+            
+            await _webGLContext.UniformMatrixAsync(
+                await _webGLContext.GetUniformLocationAsync(program, "uProjectionMatrix"), 
+                false,
+                new float[16]
+                {
+                    m1.M11, m1.M12, m1.M13, m1.M14,
+                    m1.M21, m1.M22, m1.M23, m1.M24,
+                    m1.M31, m1.M32, m1.M33, m1.M34,
+                    m1.M41, m1.M42, m1.M43, m1.M44
+                });
+            await _webGLContext.UniformMatrixAsync(
+                await _webGLContext.GetUniformLocationAsync(program, "uModelViewMatrix"), 
+                false,
+                new float[16]
+                {
+                    m2.M11, m2.M12, m2.M13, m2.M14,
+                    m2.M21, m2.M22, m2.M23, m2.M24,
+                    m2.M31, m2.M32, m2.M33, m2.M34,
+                    m2.M41, m2.M42, m2.M43, m2.M44
+                });
+            await _webGLContext.DrawArraysAsync(Primitive.TRIANGLES, 0, 4);
+
+            await _webGLContext.EndBatchAsync();
         }
 
         private async Task OnAfterRenderAsyncCanvas2D(bool firstRender)
