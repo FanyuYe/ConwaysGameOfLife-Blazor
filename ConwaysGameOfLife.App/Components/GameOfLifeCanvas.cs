@@ -209,15 +209,18 @@ namespace ConwaysGameOfLife.App.Components
                     throw new ApplicationException($"Unable to initialize the shader program: {await _webGLContext.GetErrorAsync()}");
                 }
 
+                var vertices = new float[(Scale + 1) * (Scale + 1) * 2];
+                for (int x = 0; x <= Scale; ++x)
+                {
+                    for (int y = 0; y <= Scale; ++y)
+                    {
+                        vertices[(x * Scale + y) * 2] = x;
+                        vertices[(x * Scale + y) * 2 + 1] = y;
+                    }
+                }
                 buffer = await _webGLContext.CreateBufferAsync();
                 await _webGLContext.BindBufferAsync(BufferType.ARRAY_BUFFER, buffer);
-                await _webGLContext.BufferDataAsync<float>(BufferType.ARRAY_BUFFER, 
-                    new float[8] { 
-                        1,1,
-                        -1,1,
-                        1,-1,
-                        -1,-1 
-                    }, BufferUsageHint.STATIC_DRAW);
+                await _webGLContext.BufferDataAsync<float>(BufferType.ARRAY_BUFFER, vertices, BufferUsageHint.STATIC_DRAW);
             }
 
             await _webGLContext.BeginBatchAsync();
@@ -236,12 +239,13 @@ namespace ConwaysGameOfLife.App.Components
                 (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"));
             await _webGLContext.UseProgramAsync(program);
 
+            var length = (0.5f * Scale) / (float)Math.Tan(22.5 * Math.PI / 180);
             var m1 = Matrix4x4.CreatePerspectiveFieldOfView(
                 45 * (float)Math.PI / 180,
                 1.0f * Width / Height,
                 0.1f,
-                100);
-            var m2 = Matrix4x4.CreateTranslation(new Vector3(-0.0f, 0.0f, -6.0f));
+                length);
+            var m2 = Matrix4x4.CreateTranslation(new Vector3(-0.5f * Scale, -0.5f * Scale, -1.0f * length));
             
             await _webGLContext.UniformMatrixAsync(
                 await _webGLContext.GetUniformLocationAsync(program, "uProjectionMatrix"), 
@@ -263,7 +267,7 @@ namespace ConwaysGameOfLife.App.Components
                     m2.M31, m2.M32, m2.M33, m2.M34,
                     m2.M41, m2.M42, m2.M43, m2.M44
                 });
-            await _webGLContext.DrawArraysAsync(Primitive.TRIANGLES, 0, 4);
+            await _webGLContext.DrawArraysAsync(Primitive.LINES, 0, Scale * Scale);
 
             await _webGLContext.EndBatchAsync();
         }
