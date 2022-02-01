@@ -11,7 +11,7 @@ using System.Timers;
 
 namespace ConwaysGameOfLife.App.Components
 {
-    public partial class GameOfLifeCanvas
+    public partial class GameOfLifeCanvas : IDisposable
     {
         private readonly string vsSource = @"
             attribute vec4 aVertexPosition;
@@ -335,6 +335,11 @@ namespace ConwaysGameOfLife.App.Components
 
             await _ctx.StrokeAsync();
             await _ctx.FillAsync();
+        }
+
+        public void Dispose()
+        {
+            _timer.Stop();
         }
     }
 }
