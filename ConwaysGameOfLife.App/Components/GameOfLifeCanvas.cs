@@ -137,7 +137,7 @@ namespace ConwaysGameOfLife.App.Components
 
         protected override async Task OnInitializedAsync()
         {
-            _timer = new Timer(250);
+            _timer = new Timer(IsWebGL ? 50 : 250);
             _timer.Elapsed += (s, e) => Tick();
 
             _stopwatch = new Stopwatch();
