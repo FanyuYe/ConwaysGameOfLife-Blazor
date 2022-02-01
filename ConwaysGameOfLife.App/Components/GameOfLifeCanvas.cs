@@ -28,7 +28,7 @@ namespace ConwaysGameOfLife.App.Components
         private readonly string fsSource = @"
             void main() 
             {
-                gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                gl_FragColor = vec4(0.0, 0.8, 0.0, 1.0);
             }
         ";
 
@@ -209,18 +209,69 @@ namespace ConwaysGameOfLife.App.Components
                     throw new ApplicationException($"Unable to initialize the shader program: {await _webGLContext.GetErrorAsync()}");
                 }
 
-                var vertices = new float[(Scale + 1) * (Scale + 1) * 2];
-                for (int x = 0; x <= Scale; ++x)
+                /*
+                 * 0 2 - 1 2 - 2 2
+                 *     \     \
+                 * 0 1 - 1 1 - 2 1
+                 *     \     \
+                 * 0 0 - 1 0 - 2 0
+                 */
+                var vertices = new float[Scale * (Scale + 1) * 2 * 2];
+                for (int x = 0; x < Scale; ++x)
                 {
+                    var xoffset = x * (Scale + 1) * 2 * 2;
+
                     for (int y = 0; y <= Scale; ++y)
                     {
-                        vertices[(x * Scale + y) * 2] = x;
-                        vertices[(x * Scale + y) * 2 + 1] = y;
+                        var yoffset = y * 2 * 2;
+
+                        // (x, y)
+                        vertices[xoffset + yoffset] = x;
+                        vertices[xoffset + yoffset + 1] = y;
+                        // (x+1, y)
+                        vertices[xoffset + yoffset + 2] = x + 1;
+                        vertices[xoffset + yoffset + 3] = y;
                     }
                 }
                 buffer = await _webGLContext.CreateBufferAsync();
                 await _webGLContext.BindBufferAsync(BufferType.ARRAY_BUFFER, buffer);
                 await _webGLContext.BufferDataAsync<float>(BufferType.ARRAY_BUFFER, vertices, BufferUsageHint.STATIC_DRAW);
+
+                await _webGLContext.VertexAttribPointerAsync(
+                    (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"),
+                    2, DataType.FLOAT, false, 0, 0);
+                await _webGLContext.EnableVertexAttribArrayAsync(
+                    (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"));
+                await _webGLContext.UseProgramAsync(program);
+
+                var length = (0.5f * Scale) / (float)Math.Tan(22.5 * Math.PI / 180);
+                var m1 = Matrix4x4.CreatePerspectiveFieldOfView(
+                    45 * (float)Math.PI / 180,
+                    1.0f * Width / Height,
+                    0.1f,
+                    length);
+                var m2 = Matrix4x4.CreateTranslation(new Vector3(-0.5f * Scale, -0.5f * Scale, -1.0f * length));
+
+                await _webGLContext.UniformMatrixAsync(
+                    await _webGLContext.GetUniformLocationAsync(program, "uProjectionMatrix"),
+                    false,
+                    new float[16]
+                    {
+                    m1.M11, m1.M12, m1.M13, m1.M14,
+                    m1.M21, m1.M22, m1.M23, m1.M24,
+                    m1.M31, m1.M32, m1.M33, m1.M34,
+                    m1.M41, m1.M42, m1.M43, m1.M44
+                    });
+                await _webGLContext.UniformMatrixAsync(
+                    await _webGLContext.GetUniformLocationAsync(program, "uModelViewMatrix"),
+                    false,
+                    new float[16]
+                    {
+                    m2.M11, m2.M12, m2.M13, m2.M14,
+                    m2.M21, m2.M22, m2.M23, m2.M24,
+                    m2.M31, m2.M32, m2.M33, m2.M34,
+                    m2.M41, m2.M42, m2.M43, m2.M44
+                    });
             }
 
             await _webGLContext.BeginBatchAsync();
@@ -231,43 +282,20 @@ namespace ConwaysGameOfLife.App.Components
             await _webGLContext.DepthFuncAsync(CompareFunction.LEQUAL);
             await _webGLContext.ClearAsync(BufferBits.COLOR_BUFFER_BIT | BufferBits.DEPTH_BUFFER_BIT);
 
-            await _webGLContext.BindBufferAsync(BufferType.ARRAY_BUFFER, buffer);
-            await _webGLContext.VertexAttribPointerAsync(
-                (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"),
-                2, DataType.FLOAT, false, 0, 0);
-            await _webGLContext.EnableVertexAttribArrayAsync(
-                (uint)await _webGLContext.GetAttribLocationAsync(program, "aVertexPosition"));
-            await _webGLContext.UseProgramAsync(program);
+            for (int x = 0; x < Scale; ++x)
+            {
+                var xoffset = x * (Scale + 1) * 2;
+                
+                for (int y = 0; y < Scale; ++y)
+                {
+                    var yoffset = y * 2;
 
-            var length = (0.5f * Scale) / (float)Math.Tan(22.5 * Math.PI / 180);
-            var m1 = Matrix4x4.CreatePerspectiveFieldOfView(
-                45 * (float)Math.PI / 180,
-                1.0f * Width / Height,
-                0.1f,
-                length);
-            var m2 = Matrix4x4.CreateTranslation(new Vector3(-0.5f * Scale, -0.5f * Scale, -1.0f * length));
-            
-            await _webGLContext.UniformMatrixAsync(
-                await _webGLContext.GetUniformLocationAsync(program, "uProjectionMatrix"), 
-                false,
-                new float[16]
-                {
-                    m1.M11, m1.M12, m1.M13, m1.M14,
-                    m1.M21, m1.M22, m1.M23, m1.M24,
-                    m1.M31, m1.M32, m1.M33, m1.M34,
-                    m1.M41, m1.M42, m1.M43, m1.M44
-                });
-            await _webGLContext.UniformMatrixAsync(
-                await _webGLContext.GetUniformLocationAsync(program, "uModelViewMatrix"), 
-                false,
-                new float[16]
-                {
-                    m2.M11, m2.M12, m2.M13, m2.M14,
-                    m2.M21, m2.M22, m2.M23, m2.M24,
-                    m2.M31, m2.M32, m2.M33, m2.M34,
-                    m2.M41, m2.M42, m2.M43, m2.M44
-                });
-            await _webGLContext.DrawArraysAsync(Primitive.LINES, 0, Scale * Scale);
+                    if (_game.GetState(x, y))
+                    {
+                        await _webGLContext.DrawArraysAsync(Primitive.TRIANGLE_STRIP, xoffset + yoffset, 4);
+                    }
+                }
+            }
 
             await _webGLContext.EndBatchAsync();
         }
