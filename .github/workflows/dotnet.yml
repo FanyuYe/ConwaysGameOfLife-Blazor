@@ -24,13 +24,13 @@ jobs:
     - name: Publish
       run: dotnet publish ConwaysGameOfLife.sln -c Release -o release --nologo
       
+    # changes the base-tag in index.html from '/' to 'ConwaysGameOfLife-Blazor' to match GitHub Pages repository subdirectory
+    - name: Change base-tag in index.html from / to ConwaysGameOfLife-Blazor
+      run: sed -i 's/<base href="\/" \/>/<base href="\/ConwaysGameOfLife-Blazor\/" \/>/g' release/wwwroot/index.html
+      
     - name: Commit wwwroot to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.2.3
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
         FOLDER: release/wwwroot
-        
-    # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
-    - name: Change base-tag in index.html from / to BlazorGitHubPagesDemo
-      run: sed -i 's/<base href="\/" \/>/<base href="\/ConwaysGameOfLife-Blazor\/" \/>/g' release/wwwroot/index.html
