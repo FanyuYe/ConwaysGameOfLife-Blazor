@@ -1,11 +1,9 @@
 ﻿@page "/gameoflife"
 @namespace ConwaysGameOfLife.App.Pages
 
-@inject ConwaysGameOfLife2D game
-
 <h3>GameOfLife</h3>
 
-<GameOfLifeCanvas GameEngine="@game" Scale="50" Width="600" Height="600" IsWebGL="true"></GameOfLifeCanvas>
+<GameOfLifeCanvas Scale="50" Width="600" Height="600" IsWebGL="true"></GameOfLifeCanvas>
 
 @code {
 

@@ -45,19 +45,16 @@ namespace ConwaysGameOfLife.App.Components
         private Stopwatch _stopwatch;
 
         [Parameter]
-        public ConwaysGameOfLife2D GameEngine { get; set; }
-
-        [Parameter]
         public int Width { get; set; } = 400;
 
         [Parameter]
         public int Height { get; set; } = 400;
 
         [Parameter]
-        public bool IsWebGL { get; set; }
+        public int Scale { get; set; } = 10;
 
         [Parameter]
-        public int Scale { get; set; } = 10;
+        public bool IsWebGL { get; set; }
 
         public double GridSize { get; private set; }
 
@@ -150,10 +147,9 @@ namespace ConwaysGameOfLife.App.Components
 
         protected override async Task OnParametersSetAsync()
         {
-            GameEngine.Scale = Scale;
             GridSize = 1.0 * Math.Min(Width, Height) / Scale;
 
-            _game = GameEngine;
+            _game = ConwaysGameOfLife2D.CreateClassicGame(Scale);
             Random();
             _game.Save();
             StateHasChanged();
