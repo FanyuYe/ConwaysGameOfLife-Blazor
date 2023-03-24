@@ -149,7 +149,7 @@
       "url": "_framework\/Microsoft.Extensions.DependencyInjection.dll"
     },
     {
-      "hash": "sha256-pCku9f8Y6BWNm7jyXpBlxjGu6bevE1MFCDCgSbyQt0A=",
+      "hash": "sha256-8L6pzpycBrKxgs\/3WsBVoR\/7NenUcL+e0i19DvlMog8=",
       "url": "_framework\/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
     },
     {
@@ -181,7 +181,7 @@
       "url": "_framework\/System.IO.Pipelines.dll"
     },
     {
-      "hash": "sha256-fXFPBnHtDjat96ZVoNWbVQsQHdmMVkOOqh5+eV\/eB9o=",
+      "hash": "sha256-hjjZZx8I50oS801Mnkg332Z87QVX\/9PbXwNBHIOKUyY=",
       "url": "_framework\/ConwaysGameOfLife.App.dll"
     },
     {
@@ -189,7 +189,7 @@
       "url": "_framework\/ConwaysGameOfLife.Core.dll"
     },
     {
-      "hash": "sha256-ERGT1tuw0W4P6T52KUDt1irAOSSWvnXFJ4Oz83V7+Jc=",
+      "hash": "sha256-bmevbBokwuUwThAstgR2UEbHWkdV5iHKAAXiApXkSu8=",
       "url": "_framework\/ConwaysGameOfLife.Client.dll"
     },
     {
@@ -273,7 +273,7 @@
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-cHCV\/aWwgfHoMUV\/OVnHhJEHs0+JMRRgTAu86VSXijQ=",
+      "hash": "sha256-uFCPuD6sjztUwp+TR98d+fDak+bXjvEdGjV7R6FtHgM=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -281,5 +281,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "pGb6oozG"
+  "version": "egl38mEh"
 };
